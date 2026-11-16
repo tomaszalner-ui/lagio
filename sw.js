@@ -1,15 +1,24 @@
 // sw.js — the service worker. The browser runs it in the background.
 // It keeps a copy of every app file, so Lagio opens without internet.
 //
+// Two caches ("saved copies"):
+//   lagio-v<VERSION>           the app's own files; replaced with every release
+//   lagio-pdfjs-<PDF.js ver.>  PDF.js (about 4 MB); kept between releases and
+//                              downloaded again only when PDF.js is upgraded
+//
 // Releasing a new version:
-//   1. node tools/update-sw.mjs <new version>   (sets VERSION, refreshes FILES)
-//      and add a CHANGELOG.md entry
+//   1. node tools/update-sw.mjs <new version>   (sets VERSION, refreshes the
+//      file lists and the PDF.js version) and add a CHANGELOG.md entry
 //   2. publish. Phones download the new files in the background and show
 //      "A new version is available". Tapping Update switches over.
-// FILES is written by tools/update-sw.mjs; `node tools/check.mjs` checks it.
+// FILES, PDFJS_FILES and PDFJS_VERSION are written by tools/update-sw.mjs;
+// `node tools/check.mjs` checks them.
 
-const VERSION = '0.4.0';
+const VERSION = '0.4.1';
 const CACHE = 'lagio-v' + VERSION;
+
+const PDFJS_VERSION = '6.5.438';
+const PDFJS_CACHE = 'lagio-pdfjs-' + PDFJS_VERSION;
 
 const FILES = [
   './',
@@ -40,6 +49,7 @@ const FILES = [
   'js/ui/home.js',
   'js/ui/html.js',
   'js/ui/illustrations.js',
+  'js/ui/import-dialog.js',
   'js/ui/lang-switch.js',
   'js/ui/not-found.js',
   'js/ui/pdf-view.js',
@@ -63,6 +73,10 @@ const FILES = [
   'vendor/htm.module.js',
   'vendor/jszip.js',
   'vendor/jszip.min.js',
+  'vendor/preact.module.js'
+];
+
+const PDFJS_FILES = [
   'vendor/pdfjs/cmaps/78-EUC-H.bcmap',
   'vendor/pdfjs/cmaps/78-EUC-V.bcmap',
   'vendor/pdfjs/cmaps/78-H.bcmap',
@@ -246,31 +260,42 @@ const FILES = [
   'vendor/pdfjs/standard_fonts/LiberationSans-Bold.ttf',
   'vendor/pdfjs/standard_fonts/LiberationSans-BoldItalic.ttf',
   'vendor/pdfjs/standard_fonts/LiberationSans-Italic.ttf',
-  'vendor/pdfjs/standard_fonts/LiberationSans-Regular.ttf',
-  'vendor/preact.module.js'
+  'vendor/pdfjs/standard_fonts/LiberationSans-Regular.ttf'
 ];
 
 // While developing on your own computer, always try the newest files first
 const IS_DEV = ['localhost', '127.0.0.1'].includes(self.location.hostname);
 
-// Install: save a copy of every file. { cache: 'reload' } skips the browser's
-// ordinary cache, so we never save an old file into a new version.
+// { cache: 'reload' } skips the browser's ordinary cache, so we never save an
+// old file into a new version
+const fresh = (url) => new Request(url, { cache: 'reload' });
+
+// Saves the PDF.js files that this PDF.js cache does not have yet
+// (normally none: they stay from the previous release)
+async function fillPdfjsCache() {
+  const cache = await caches.open(PDFJS_CACHE);
+  const have = new Set((await cache.keys()).map((request) => request.url));
+  const missing = PDFJS_FILES.filter((path) => !have.has(new URL(path, self.location).href));
+  return cache.addAll(missing.map(fresh));
+}
+
+// Install: save a copy of every file
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE).then((cache) =>
-      cache.addAll(FILES.map((url) => new Request(url, { cache: 'reload' })))
-    )
-  );
+  event.waitUntil(Promise.all([
+    caches.open(CACHE).then((cache) => cache.addAll(FILES.map(fresh))),
+    fillPdfjsCache()
+  ]));
   // No skipWaiting() here: the new version waits until the user taps Update.
 });
 
-// Activate: delete the copies of older versions
+// Activate: delete the copies of older versions (and of an older PDF.js),
+// but never the current ones
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
       .then((names) => Promise.all(
         names
-          .filter((name) => name.startsWith('lagio-') && name !== CACHE)
+          .filter((name) => name.startsWith('lagio-') && name !== CACHE && name !== PDFJS_CACHE)
           .map((name) => caches.delete(name))
       ))
       .then(() => self.clients.claim())

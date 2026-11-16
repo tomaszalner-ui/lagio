@@ -180,16 +180,36 @@ textarea {
   text-decoration: none;
 }
 
-.archive-link {
+/* Below the trip list: Import trip and the archive link */
+.home-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
   margin-top: 24px;
-  text-align: center;
 }
 
-.archive-link a {
+.archive-link {
   display: inline-block;
   min-height: var(--tap);
   padding: 10px 12px;
   font-weight: 600;
+}
+
+/* Import summary (import-dialog.js) */
+.import-summary {
+  display: grid;
+  gap: 2px;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  background: var(--color-primary-soft);
+}
+
+.import-name {
+  font-size: 18px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
 }
 
 .notice {

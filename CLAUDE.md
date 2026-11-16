@@ -70,6 +70,8 @@ Technical decisions made while building (the full list is in the plan doc and th
 | Travel times | Flight, train, bus, ferry may end up to 26 h "before" they start (time zones): a note, not an error. Stays and car rentals stay strict |
 | Trip file | `.lagio` zip: `trip.json` (`app`, `formatVersion` 1, `appVersion`, records per store) + `files/<id>` stored uncompressed. Deleted records are left out. Every store except `files`/`settings` must be in `EXPORTED_STORES` (check.mjs) |
 | Export flow | Two taps: prepare the file, then Bendrinti (if the phone can share it; iPhone yes, Android Chrome no) or Atsisiųsti. The app version lives in `js/version.js`, written by `update-sw.mjs` |
+| Import | File checked fully before saving: only `trip.json` and `files/<uuid>` entries; limits 400 MB per file, 100 MB per attached file, 10 MB for trip.json (read in pieces, so zip bombs stop early). Same trip on the phone: copy (new ids, links remapped, "(kopija)") or replace; otherwise saved with its ids. One transaction (`importBundle`) |
+| Offline caches | `lagio-v<version>` for app files; `lagio-pdfjs-<PDF.js version>` for PDF.js, filled only with missing files and kept between releases |
 | Booking types | flight, train, bus, ferry, car, stay, event, other; start/end labels follow the type. Address opens a Google Maps search link (tapped by the user, not fetched) |
 
 ## Build order (phase 1)

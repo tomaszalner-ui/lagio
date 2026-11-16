@@ -2,7 +2,7 @@
 // Shared by update-sw.mjs (writes the list into sw.js) and check.mjs
 // (checks that sw.js lists exactly these files).
 
-import { readdirSync, statSync } from 'node:fs';
+import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -21,6 +21,19 @@ function filesIn(dir) {
 
 // Licences and notes in vendor/ are for people, not for the app
 const NOT_FOR_THE_APP = /(^|\/)(README\.md|LICENSE[^/]*)$/;
+
+// PDF.js files live in their own cache (see sw.js)
+export function isPdfjsFile(path) {
+  return path.startsWith('vendor/pdfjs/');
+}
+
+// The PDF.js version, read from the library itself ('6.5.438')
+export function pdfjsVersion() {
+  const source = readFileSync(join(ROOT, 'vendor', 'pdfjs', 'pdf.min.mjs'), 'utf8');
+  const match = source.match(/apiVersion:"(\d+\.\d+\.\d+)"/);
+  if (!match) throw new Error('PDF.js version not found in vendor/pdfjs/pdf.min.mjs');
+  return match[1];
+}
 
 export function appFiles() {
   return [

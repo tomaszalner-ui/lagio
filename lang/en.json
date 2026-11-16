@@ -104,6 +104,27 @@
   "export.downloaded": "“{name}” saved to Downloads",
   "export.failed": "Could not prepare the file. Please try again.",
 
+  "home.importTrip": "Import trip",
+  "import.reading": "Checking the file…",
+  "import.title": "Import this trip?",
+  "import.failedTitle": "Could not import",
+  "import.exportedOn": "Exported {date}",
+  "import.existsText": "This trip is already on this phone. Add it as a separate copy, or replace the one here with the version from the file.",
+  "import.confirm": "Import",
+  "import.asCopy": "Add as a copy",
+  "import.replace": "Replace",
+  "import.saving": "Importing…",
+  "import.done": "Trip imported",
+  "import.error.tooLarge": "The file is too large: a trip file can be up to 400 MB.",
+  "import.error.notTripFile": "This is not a Lagio trip file.",
+  "import.error.newerVersion": "This file was made by a newer version of Lagio. Update the app and try again.",
+  "import.error.damaged": "The trip file is damaged or incomplete, so it can’t be imported.",
+  "import.error.failed": "Import failed. Nothing was saved.",
+  "bookings.count": {
+    "one": "{count} booking",
+    "other": "{count} bookings"
+  },
+
   "delete.title": "Delete this trip?",
   "delete.text": "“{name}” and everything in it will be deleted. You can still undo this right after.",
   "delete.confirm": "Delete",

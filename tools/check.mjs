@@ -9,7 +9,7 @@
 
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
-import { ROOT, appFiles as listAppFiles } from './app-files.mjs';
+import { ROOT, appFiles as listAppFiles, isPdfjsFile, pdfjsVersion } from './app-files.mjs';
 
 const problems = [];
 const warnings = [];
@@ -152,6 +152,18 @@ for (const file of appFiles) {
 }
 for (const file of listed) {
   if (!appFiles.includes(file)) problems.push(`sw.js FILES lists "${file}", which does not exist (run: node tools/update-sw.mjs)`);
+}
+
+// PDF.js files belong in PDFJS_FILES only (their own cache), app files in FILES
+const swList = (name) => {
+  const block = (sw.match(new RegExp(`const ${name} = \\[([\\s\\S]*?)\\n\\];`)) || [])[1] || '';
+  return [...block.matchAll(/'([^']+)'/g)].map((m) => m[1]);
+};
+if (swList('FILES').some(isPdfjsFile)) problems.push('sw.js FILES contains PDF.js files (they belong in PDFJS_FILES)');
+if (swList('PDFJS_FILES').some((f) => !isPdfjsFile(f))) problems.push('sw.js PDFJS_FILES contains non-PDF.js files');
+const swPdfjsVersion = (sw.match(/const PDFJS_VERSION = '([^']*)'/) || [])[1];
+if (swPdfjsVersion !== pdfjsVersion()) {
+  problems.push(`sw.js PDFJS_VERSION is "${swPdfjsVersion}" but vendor/pdfjs is ${pdfjsVersion()} (run: node tools/update-sw.mjs)`);
 }
 
 // ---------- 4b. same version in sw.js and js/version.js ----------

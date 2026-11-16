@@ -210,6 +210,49 @@ export function restore(storeName, id) {
   return modify(storeName, id, () => ({ deletedAt: null }));
 }
 
+// ---------- import (all or nothing) ----------
+
+// Writes a whole imported trip in ONE transaction across all stores: if any
+// part fails (even "the phone is full"), nothing at all is saved.
+//   put:         { storeName: [complete records…] }  saved exactly as given
+//   softDeletes: { storeName: [ids…] }               marked deleted
+// Used only by transfer.js, which checks and prepares the records first.
+export function importBundle({ put = {}, softDeletes = {} }) {
+  const names = [...new Set([...Object.keys(put), ...Object.keys(softDeletes)])];
+  for (const name of names) {
+    if (!STORES.includes(name)) return Promise.reject(new Error('Unknown store: ' + name));
+  }
+  return openDb().then((db) => new Promise((resolve, reject) => {
+    const tx = db.transaction(names, 'readwrite');
+    const time = now();
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+    tx.onabort = () => reject(tx.error || new Error('Import aborted'));
+    try {
+      for (const [name, records] of Object.entries(put)) {
+        const store = tx.objectStore(name);
+        for (const record of records) store.put(record);
+      }
+      for (const [name, ids] of Object.entries(softDeletes)) {
+        const store = tx.objectStore(name);
+        for (const id of ids) {
+          const request = store.get(id);
+          request.onsuccess = () => {
+            const record = request.result;
+            if (record && !record.deletedAt) {
+              store.put({ ...record, deletedAt: time, updatedAt: time, version: (record.version || 0) + 1 });
+            }
+          };
+        }
+      }
+    } catch (error) {
+      // A record that cannot be saved: undo everything written so far
+      tx.abort();
+      reject(error);
+    }
+  }));
+}
+
 // ---------- files (PDFs, images) ----------
 
 // Saves a file (a Blob or a File from <input type="file">) for a trip.
