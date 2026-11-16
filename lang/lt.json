@@ -178,12 +178,25 @@
   "toast.bookingDeleted": "Rezervacija ištrinta",
   "toast.copied": "Nukopijuota",
 
-  "documents.title": "Dokumentai",
+  "documents.otherTitle": "Kiti dokumentai",
+  "documents.otherEmptyTitle": "Kitų dokumentų nėra",
+  "documents.otherEmptyText": "Čia laikykite draudimą, paso kopiją ir kitus visai kelionei skirtus dokumentus. Failai saugomi šiame telefone ir atsidaro be interneto.",
+  "documents.bookingTitle": "Bilietai ir dokumentai",
+  "documents.bookingEmptyTitle": "Bilietų dar nėra",
+  "documents.bookingEmptyText": "Pridėkite šios rezervacijos bilietą PDF formatu arba jo nuotrauką. Jis atsidarys ir be interneto.",
+  "documents.addTicket": "Pridėti bilietą",
+  "documents.moveTitle": "Kur perkelti dokumentą?",
+  "bookings.attachments": {
+    "one": "{count} dokumentas",
+    "few": "{count} dokumentai",
+    "many": "{count} dokumento",
+    "other": "{count} dokumentų"
+  },
+  "viewer.move": "Perkelti",
+  "toast.documentMoved": "Perkelta: {target}",
   "documents.add": "Pridėti dokumentą",
   "documents.adding": "Pridedama…",
   "documents.untitled": "Dokumentas be pavadinimo",
-  "documents.emptyTitle": "Dokumentų dar nėra",
-  "documents.emptyText": "Pridėkite bilietą PDF formatu arba nufotografuokite popierinį. Failai saugomi šiame telefone ir atsidaro be interneto.",
   "documents.meta": "{size} · pridėta {date}",
   "documents.storageUsed": "Užimta vieta: {size}",
   "documents.added": {

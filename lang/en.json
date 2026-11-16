@@ -174,12 +174,23 @@
   "toast.bookingDeleted": "Booking deleted",
   "toast.copied": "Copied",
 
-  "documents.title": "Documents",
+  "documents.otherTitle": "Other documents",
+  "documents.otherEmptyTitle": "No other documents",
+  "documents.otherEmptyText": "Keep insurance, a passport copy and other documents for the whole trip here. Files are stored on this phone and open without internet.",
+  "documents.bookingTitle": "Tickets and documents",
+  "documents.bookingEmptyTitle": "No tickets yet",
+  "documents.bookingEmptyText": "Add this booking’s ticket as a PDF or a photo. It opens without internet too.",
+  "documents.addTicket": "Add ticket",
+  "documents.moveTitle": "Move the document to…",
+  "bookings.attachments": {
+    "one": "{count} document",
+    "other": "{count} documents"
+  },
+  "viewer.move": "Move",
+  "toast.documentMoved": "Moved to {target}",
   "documents.add": "Add document",
   "documents.adding": "Adding…",
   "documents.untitled": "Untitled document",
-  "documents.emptyTitle": "No documents yet",
-  "documents.emptyText": "Add a ticket as a PDF, or take a photo of a paper one. Files are stored on this phone and open without internet.",
   "documents.meta": "{size} · added {date}",
   "documents.storageUsed": "Space used: {size}",
   "documents.added": {

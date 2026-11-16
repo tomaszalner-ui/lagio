@@ -8,7 +8,7 @@
 //      "A new version is available". Tapping Update switches over.
 // FILES is written by tools/update-sw.mjs; `node tools/check.mjs` checks it.
 
-const VERSION = '0.3.2';
+const VERSION = '0.3.3';
 const CACHE = 'lagio-v' + VERSION;
 
 const FILES = [
@@ -31,6 +31,7 @@ const FILES = [
   'js/ui/booking-parts.js',
   'js/ui/color-picker.js',
   'js/ui/dialog.js',
+  'js/ui/document-section.js',
   'js/ui/document-viewer.js',
   'js/ui/empty-state.js',
   'js/ui/field.js',

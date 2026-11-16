@@ -1,6 +1,6 @@
 // booking-detail.js — one booking (#/trip/:id/bookings/:bookingId):
 // all its details, copy the confirmation code, open the address in a map,
-// edit or delete it. Step 3c adds its attached tickets here.
+// edit or delete it, and its attached tickets ("Bilietai ir dokumentai").
 
 import { useEffect, useState } from 'preact/hooks';
 import { html } from './html.js';
@@ -13,6 +13,7 @@ import { NotFound } from './not-found.js';
 import { showToast } from './toast.js';
 import { ChevronLeft, CopyIcon, PinIcon } from './illustrations.js';
 import { TYPE_INFO, TypeIcon, timeLabels } from './booking-parts.js';
+import { DocumentSection } from './document-section.js';
 
 // Copies text. The modern way first; if the browser refuses it, the older
 // way through a hidden text field. Returns true when it worked.
@@ -46,6 +47,7 @@ export function BookingDetail({ tripId, bookingId }) {
 
   useEffect(() => {
     if (bookings.tripId !== tripId) reloadBookings(tripId).catch((error) => console.error(error));
+    reloadDocuments(tripId).catch((error) => console.error(error));
   }, [tripId]);
 
   const trip = trips.find((item) => item.id === tripId);
@@ -146,6 +148,17 @@ export function BookingDetail({ tripId, bookingId }) {
           <p class="detail-label">${t('bookingForm.note')}</p>
           <p class="detail-value detail-note">${booking.note}</p>
         </div>`}
+
+      <${DocumentSection}
+        tripId=${tripId}
+        bookingId=${booking.id}
+        labels=${{
+          title: 'documents.bookingTitle',
+          emptyTitle: 'documents.bookingEmptyTitle',
+          emptyText: 'documents.bookingEmptyText',
+          add: 'documents.addTicket'
+        }}
+      />
 
       <div class="form-buttons detail-buttons">
         <button type="button" class="button button-danger-text" onClick=${() => setConfirmingDelete(true)}>

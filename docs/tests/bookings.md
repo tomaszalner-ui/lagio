@@ -86,3 +86,22 @@ Checked in code: price parsing ("49,99" and "49.99" → 4999, "1 250" → 125000
 | 4.5 | Airplane mode: open the 3-page PDF. | All pages drawn (PDF.js, its worker and fonts are cached: 232 offline files). | ✔ |
 | 4.6 | A real ticket PDF on Android Chrome and/or iPhone Safari, from the installed app. | Every page shows inside Lagio; zoom works; nothing is blank. | Phone |
 | 4.7 | Data from 0.3.1. | Updates; its PDF opens with PDF.js. The update banner still appears while the app is open (bigger download). | ✔ |
+
+Phone test by the owner on 2026-11-16 (version 0.3.2): PDF viewing, zoom and the other fixes work.
+
+## Step 3c: documents on bookings (version 0.3.3)
+
+✔ = passed in headless Edge on 2026-11-16. "Phone" = to check on the owner's phone.
+
+| # | Steps | Expected | Result |
+| --- | --- | --- | --- |
+| 1 | Open a booking with no files. | Section "Bilietai ir dokumentai": "Bilietų dar nėra", hint, **Pridėti bilietą**. | ✔ |
+| 2 | **Pridėti bilietą** → a PDF. | "Pridėtas 1 dokumentas"; listed on the booking; it opens with all pages. | ✔ |
+| 3 | Back to the list. | The booking's card shows 📎 1 (read aloud as "1 dokumentas"); the ticket is not under "Kiti dokumentai". | ✔ |
+| 4 | Add a file under "Kiti dokumentai". | Listed there; "Užimta vieta" counts all the trip's files. | ✔ |
+| 5 | Open it → **Perkelti** → choose a booking → then **Grąžinti**. | The sheet lists every booking (not where it already is); "Perkelta: Viešbutis · Grąžinti"; the count moves to that card; Undo moves it back. | ✔ |
+| 6 | On a booking, open its ticket → Perkelti → **Kiti dokumentai** → Grąžinti. | The booking shows "Bilietų dar nėra"; Undo brings the ticket back. | ✔ |
+| 7 | Delete a booking that has a ticket → Grąžinti. | The booking and its ticket are deleted (other documents stay); Undo brings both back. | ✔ |
+| 8 | EN; plurals; 360 px; viewer with 5 buttons. | "Tickets and documents", "Other documents", "1 document"; 1 dokumentas / 2 dokumentai / 10 dokumentų / 21 dokumentas; buttons wrap on two lines without sideways scrolling. | ✔ |
+| 9 | Data from 0.3.2; airplane mode. | Earlier files appear under "Kiti dokumentai" and still open; everything works offline. | ✔ |
+| 10 | On the phone: attach a real ticket to a booking, move one, open it in airplane mode. | As above. | Phone |

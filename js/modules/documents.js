@@ -8,7 +8,7 @@
 // bookingId links a document to one booking (milestone 3c);
 // null means it belongs to the whole trip.
 
-import { create, list, softDelete, restore, putFile, getFile, dropFileContent } from '../db.js';
+import { create, list, update, softDelete, restore, putFile, getFile, dropFileContent } from '../db.js';
 
 // Files above this size ask before they are added (20 MB)
 export const LARGE_FILE_BYTES = 20 * 1024 * 1024;
@@ -51,6 +51,21 @@ export async function listDocuments(tripId) {
 export async function loadDocumentBlob(doc) {
   const file = await getFile(doc.fileId);
   return file ? file.blob : null;
+}
+
+// Moves a document to a booking of the same trip, or to the whole trip
+// (bookingId null). Returns the saved document.
+export function moveDocument(doc, bookingId) {
+  return update('documents', doc.id, { bookingId: bookingId || null });
+}
+
+// How many documents each booking has: { bookingId: count }
+export function countByBooking(docs) {
+  const counts = {};
+  for (const doc of docs) {
+    if (doc.bookingId) counts[doc.bookingId] = (counts[doc.bookingId] || 0) + 1;
+  }
+  return counts;
 }
 
 // Total size of some documents, in bytes

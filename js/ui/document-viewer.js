@@ -18,7 +18,9 @@ import { CloseIcon } from './illustrations.js';
 import { showToast } from './toast.js';
 import { PdfView } from './pdf-view.js';
 
-export function DocumentViewer({ doc, onClose, onDelete }) {
+// onMove is optional: when given, a "Move" button lets the user put the
+// document on another booking (or back to the trip's other documents).
+export function DocumentViewer({ doc, onClose, onDelete, onMove }) {
   const [blob, setBlob] = useState(null);
   const [url, setUrl] = useState(null);
   const [missing, setMissing] = useState(false);
@@ -97,6 +99,8 @@ export function DocumentViewer({ doc, onClose, onDelete }) {
         ${canShare && html`
           <button type="button" class="button" onClick=${share}>${t('viewer.share')}</button>`}
         <button type="button" class="button" disabled=${!url} onClick=${download}>${t('viewer.download')}</button>
+        ${onMove && html`
+          <button type="button" class="button" onClick=${onMove}>${t('viewer.move')}</button>`}
         <button type="button" class="button button-danger-text" onClick=${onDelete}>${t('viewer.delete')}</button>
       </div>
     <//>`;

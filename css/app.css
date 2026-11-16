@@ -1015,6 +1015,9 @@ textarea {
 
 .detail-buttons {
   justify-content: space-between;
+  margin-top: 28px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
 }
 
 /* ---------- documents ---------- */
@@ -1218,4 +1221,24 @@ textarea {
   .tiles {
     grid-template-columns: 1fr 1fr 1fr;
   }
+}
+
+/* Number of files attached to a booking (booking cards) */
+.attachment-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex: none;
+  margin-left: auto;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-dark);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.attachment-count .icon {
+  width: 16px;
+  height: 16px;
 }

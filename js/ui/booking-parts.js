@@ -6,7 +6,7 @@ import { t, formatTime, formatDateTime } from '../i18n.js';
 import { paths } from '../router.js';
 import { timeLabelKind, splitDateTime } from '../modules/bookings.js';
 import {
-  PlaneIcon, TrainIcon, BusIcon, FerryIcon, CarIcon, BedIcon, TicketIcon, StarIcon
+  PlaneIcon, TrainIcon, BusIcon, FerryIcon, CarIcon, BedIcon, TicketIcon, StarIcon, PaperclipIcon
 } from './illustrations.js';
 
 // Text key and icon for each booking type
@@ -55,7 +55,8 @@ export function timeSummary(booking) {
     : t('bookings.untilDay', { end: formatDateTime(booking.endAt) });
 }
 
-export function BookingCard({ tripId, booking }) {
+// attachments: how many files are attached (shown as 📎 2)
+export function BookingCard({ tripId, booking, attachments = 0 }) {
   const time = timeSummary(booking);
   const meta = [booking.provider, booking.confirmationCode].filter(Boolean).join(' · ');
   return html`
@@ -66,5 +67,11 @@ export function BookingCard({ tripId, booking }) {
         ${time && html`<span class="booking-time">${time}</span>`}
         ${meta && html`<span class="booking-meta">${meta}</span>`}
       </span>
+      ${attachments > 0 && html`
+        <span class="attachment-count" title=${t('bookings.attachments', { count: attachments })}>
+          <${PaperclipIcon} />
+          <span aria-hidden="true">${attachments}</span>
+          <span class="visually-hidden">${t('bookings.attachments', { count: attachments })}</span>
+        </span>`}
     </a>`;
 }

@@ -56,8 +56,8 @@ export function ActionSheet({ open, title, actions, onClose }) {
     <${Modal} open=${open} onClose=${onClose} className="sheet" titleId=${titleId}>
       <h2 class="sheet-title" id=${titleId}>${title}</h2>
       <ul class="sheet-list">
-        ${actions.map((action) => html`
-          <li key=${action.label}>
+        ${actions.map((action, index) => html`
+          <li key=${index}>
             <button
               type="button"
               class=${'sheet-action' + (action.danger ? ' is-danger' : '')}
