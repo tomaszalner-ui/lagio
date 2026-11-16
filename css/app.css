@@ -1497,3 +1497,61 @@ textarea {
 .modal-form {
   margin-top: 12px;
 }
+
+/* Template picker (packing-templates.js) */
+.tpl-heading {
+  margin: 14px 0 6px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.tpl-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.tpl-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-left: 12px;
+}
+
+.tpl-row + .tpl-row {
+  border-top: 1px solid var(--color-border);
+}
+
+.tpl-label {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+  min-width: 0;
+  min-height: 48px;
+  padding: 12px 4px 12px 10px;
+  cursor: pointer;
+}
+
+.tpl-name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.tpl-count {
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.tpl-rename {
+  display: flex;
+  flex: 1;
+  gap: 8px;
+  padding: 6px 6px 6px 0;
+}

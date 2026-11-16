@@ -16,6 +16,7 @@ import { EmptyState } from './empty-state.js';
 import { Modal, ConfirmDialog } from './dialog.js';
 import { NotFound } from './not-found.js';
 import { showToast } from './toast.js';
+import { TemplatePicker, SaveTemplateDialog } from './packing-templates.js';
 import { ChevronLeft, PlusIcon, MinusIcon, PencilIcon } from './illustrations.js';
 
 // Text key of each category's name
@@ -131,6 +132,8 @@ export function TripPacking({ id }) {
   const [hidePacked, setHidePacked] = useState(false);
   const [editing, setEditing] = useState(null);
   const [confirmingReset, setConfirmingReset] = useState(false);
+  const [picking, setPicking] = useState(false);          // "add from template" open
+  const [savingTemplate, setSavingTemplate] = useState(false);
 
   useEffect(() => {
     reloadChecklist(id).catch((error) => console.error(error));
@@ -252,15 +255,19 @@ export function TripPacking({ id }) {
 
       ${total > 0 && html`
         <div class="pack-tools">
+          <button type="button" class="chip-toggle" onClick=${() => setPicking(true)}>${t('packing.fromTemplateShort')}</button>
           <button type="button" class="chip-toggle" aria-pressed=${hidePacked} onClick=${() => setHidePacked(!hidePacked)}>
             ${t('packing.hidePacked')}
           </button>
           ${done > 0 && html`
             <button type="button" class="chip-toggle" onClick=${() => setConfirmingReset(true)}>${t('packing.reset')}</button>`}
+          <button type="button" class="chip-toggle" onClick=${() => setSavingTemplate(true)}>${t('packing.saveTemplateShort')}</button>
         </div>`}
 
       ${loaded && total === 0 && html`
-        <${EmptyState} title=${t('packing.emptyTitle')} text=${t('packing.emptyText')} />`}
+        <${EmptyState} title=${t('packing.emptyTitle')} text=${t('packing.emptyText')}>
+          <button type="button" class="button button-primary" onClick=${() => setPicking(true)}>${t('packing.fromTemplate')}</button>
+        <//>`}
 
       ${groupByCategory(shown).map((group) => html`
         <section class="pack-group" key=${group.category}>
@@ -277,6 +284,8 @@ export function TripPacking({ id }) {
       ${hidePacked && total > 0 && shown.length === 0 && html`
         <p class="pack-all-hidden">${t('packing.allDone')}</p>`}
 
+      ${picking && html`<${TemplatePicker} trip=${trip} items=${items} onClose=${() => setPicking(false)} />`}
+      ${savingTemplate && html`<${SaveTemplateDialog} trip=${trip} items=${items} onClose=${() => setSavingTemplate(false)} />`}
       ${editing && html`
         <${EditItemDialog} item=${editing} onClose=${() => setEditing(null)} onDelete=${() => remove(editing)} />`}
       <${ConfirmDialog}

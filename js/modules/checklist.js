@@ -93,6 +93,38 @@ export async function undoUntickAll(ids) {
   for (const id of ids) await setDone(id, true);
 }
 
+// ---------- adding many at once (templates) ----------
+
+const sameText = (a, b) => a.trim().toLocaleLowerCase() === b.trim().toLocaleLowerCase();
+
+// Of `items` ({ text, category, quantity }), the ones not already on the list
+// (same text, ignoring case) and not repeated inside `items` itself
+export function newItemsOnly(existing, items) {
+  const result = [];
+  for (const item of items) {
+    const taken = existing.some((other) => sameText(other.text, item.text)) ||
+      result.some((other) => sameText(other.text, item.text));
+    if (!taken) result.push(item);
+  }
+  return result;
+}
+
+// Adds the items that are not on the list yet. Returns the new ids (for Undo).
+export async function addItems(tripId, items, { ownerId = null } = {}) {
+  const existing = await listItems(tripId);
+  const ids = [];
+  for (const item of newItemsOnly(existing, items)) {
+    const created = await addItem(tripId, { ...item, ownerId });
+    ids.push(created.id);
+  }
+  return ids;
+}
+
+// Undo for addItems()
+export async function removeItems(ids) {
+  for (const id of ids) await softDelete('checklistItems', id);
+}
+
 // { done: 12, total: 30 }
 export function progress(items) {
   return { done: items.filter((item) => item.done).length, total: items.length };

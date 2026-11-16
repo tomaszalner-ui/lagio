@@ -18,3 +18,23 @@
 | 10 | Reload; export the trip and import it as a copy. | Everything stays; the copy has the same list (with ×3 and ticks). | ✔ |
 | 11 | EN; 360 px; airplane mode. | "Everything is packed!", "Documents 1/1"; no sideways scrolling; ticking and adding work offline. | ✔ |
 | 12 | Phone: pack for real with it. | Rows are easy to tap; nothing feels slow. | Phone |
+
+Phone test by the owner on 2026-11-16 (version 0.5.0): adding items works.
+
+## Step 5b: templates (version 0.5.1)
+
+✔ = passed in headless Edge on 2026-11-16. "Phone" = to check on the owner's phone.
+
+| # | Steps | Expected | Result |
+| --- | --- | --- | --- |
+| 1 | Empty list → **Pridėti iš šablono**. | "Lagio šablonai": Būtiniausi (25 daiktai, ticked), Paplūdimys (13 daiktų), Miestas (10 daiktų), Žiema (14 daiktų); button "Pridėti (25)". | ✔ |
+| 2 | Tick Paplūdimys, then Miestas. | "Pridėti (38)", then "Pridėti (47)": Gertuvė, in both themes, counts once. | ✔ |
+| 3 | Add Būtiniausi + Paplūdimys on a 5-day trip. | "Pridėti 38 daiktai · Grąžinti"; Apatiniai ×5, Kojinės ×5, Marškinėliai ×5, Maudymosi kostiumėlis ×2; all 6 categories filled. | ✔ |
+| 4 | **Grąžinti**. | All 38 removed again. | ✔ |
+| 5 | Apply a template whose items are all already there. | "Visi pasirinktų šablonų daiktai jau yra sąraše."; "Pridėti (0)" is greyed out. | ✔ |
+| 6 | 10-day trip; trip without dates. | Per-day items stop at ×7; without dates they get no number. | ✔ |
+| 7 | **Išsaugoti šabloną** → name "Mano kelionė". | "Šablone bus 25 daiktai, be pažymėjimų…"; "Šablonas „Mano kelionė“ išsaugotas". | ✔ |
+| 8 | Another trip → picker → "Mano šablonai": rename to "Mano slidinėjimas", apply it, then delete it (asks first). | Renamed; applied without ticks (own templates keep the quantities they were saved with); deleted, trip lists unchanged. | ✔ |
+| 9 | Duplicate a trip whose list has ticks. | The copy has the whole list, nothing ticked, ×N kept; the original keeps its ticks. | ✔ |
+| 10 | EN; airplane mode; 360 px. | "Essentials, Beach, City, Winter", items "Passport or ID card…", "25 items added"; templates work offline; the picker fits without sideways scrolling. | ✔ |
+| 11 | Phone: start a real list from templates. | Lithuanian wording reads well; nothing important is missing. | Phone |

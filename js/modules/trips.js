@@ -111,12 +111,20 @@ export async function listTrips() {
 
 // A copy with the same details, but without dates: a copy is usually the
 // start of a new trip, so the old dates would be wrong. `name` comes from the
-// screen, because this file has no text. Later milestones decide which of the
-// trip's records (packing list, notes…) are copied too.
+// screen, because this file has no text. The packing list is copied with
+// nothing ticked; bookings and documents are not copied (they belong to the
+// old trip).
 export async function duplicateTrip(id, { name }) {
   const trip = await get('trips', id);
   if (!trip) throw new Error('Trip not found: ' + id);
-  return createTrip({ ...cleanTrip(trip), name, startDate: '', endDate: '' });
+  const copy = await createTrip({ ...cleanTrip(trip), name, startDate: '', endDate: '' });
+  for (const item of await list('checklistItems', { tripId: id })) {
+    const { listName, category, text, quantity, order, ownerId } = item;
+    await create('checklistItems', {
+      tripId: copy.id, listName, category, text, quantity: quantity || null, order, ownerId: ownerId || null, done: false
+    });
+  }
+  return copy;
 }
 
 export function archiveTrip(id) {
