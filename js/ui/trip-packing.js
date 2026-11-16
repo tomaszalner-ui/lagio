@@ -10,7 +10,7 @@ import { t } from '../i18n.js';
 import { paths } from '../router.js';
 import {
   CATEGORIES, MAX_QUANTITY, validateItem, addItem, updateItem, setDone, deleteItem, undoDeleteItem,
-  untickAll, undoUntickAll, progress, groupByCategory
+  untickAll, undoUntickAll, progress, groupByCategory, itemsFor
 } from '../modules/checklist.js';
 import { EmptyState } from './empty-state.js';
 import { Modal, ConfirmDialog } from './dialog.js';
@@ -55,11 +55,12 @@ function QuantityStepper({ value, onChange }) {
     </div>`;
 }
 
-// The edit box for one item
-function EditItemDialog({ item, onClose, onDelete }) {
+// The edit box for one item. With travelers, "Whose" moves it to a person.
+function EditItemDialog({ item, travelers, onClose, onDelete }) {
   const [text, setText] = useState(item.text);
   const [category, setCategory] = useState(item.category);
   const [quantity, setQuantity] = useState(item.quantity);
+  const [ownerId, setOwnerId] = useState(item.ownerId || '');
   const [error, setError] = useState('');
   const titleId = useRef('edit-item-' + item.id).current;
 
@@ -70,7 +71,7 @@ function EditItemDialog({ item, onClose, onDelete }) {
       return;
     }
     try {
-      await updateItem(item.id, { text, category, quantity });
+      await updateItem(item.id, { text, category, quantity, ownerId: ownerId || null });
       await reloadChecklist(item.tripId);
       onClose();
     } catch (failure) {
@@ -99,6 +100,14 @@ function EditItemDialog({ item, onClose, onDelete }) {
             <${QuantityStepper} value=${quantity} onChange=${setQuantity} />
           </div>
         </div>
+        ${travelers.length > 0 && html`
+          <div class="field">
+            <label class="field-label" for="edit-item-owner">${t('packing.owner')}</label>
+            <select id="edit-item-owner" class="input" value=${ownerId} onChange=${(event) => setOwnerId(event.currentTarget.value)}>
+              <option value="">${t('packing.view.shared')}</option>
+              ${travelers.map((person) => html`<option key=${person.id} value=${person.id}>${person.name}</option>`)}
+            </select>
+          </div>`}
         <div class="modal-buttons">
           <button type="button" class="button button-danger-text" onClick=${onDelete}>${t('packing.delete')}</button>
           <button type="button" class="button" onClick=${onClose}>${t('common.cancel')}</button>
@@ -108,7 +117,8 @@ function EditItemDialog({ item, onClose, onDelete }) {
     <//>`;
 }
 
-function ItemRow({ item, onToggle, onEdit }) {
+// ownerName: shown as a small tag in the "All" view
+function ItemRow({ item, ownerName, onToggle, onEdit }) {
   const inputId = 'pack-' + item.id;
   return html`
     <li class=${'pack-item' + (item.done ? ' is-done' : '')}>
@@ -116,6 +126,7 @@ function ItemRow({ item, onToggle, onEdit }) {
       <label class="pack-label" for=${inputId}>
         <span class="pack-text">${item.text}</span>
         ${item.quantity && html`<span class="pack-quantity">×${item.quantity}</span>`}
+        ${ownerName && html`<span class="pack-owner">${ownerName}</span>`}
       </label>
       <button type="button" class="pack-edit" aria-label=${t('packing.editItem', { name: item.text })} onClick=${() => onEdit(item)}>
         <${PencilIcon} />
@@ -134,6 +145,7 @@ export function TripPacking({ id }) {
   const [confirmingReset, setConfirmingReset] = useState(false);
   const [picking, setPicking] = useState(false);          // "add from template" open
   const [savingTemplate, setSavingTemplate] = useState(false);
+  const [view, setView] = useState('all'); // 'all', 'shared' or a traveler's id
 
   useEffect(() => {
     reloadChecklist(id).catch((error) => console.error(error));
@@ -142,11 +154,35 @@ export function TripPacking({ id }) {
   const trip = trips.find((item) => item.id === id);
   if (!trip) return html`<${NotFound} />`;
 
+  const travelers = trip.travelers || [];
+  // A view of a traveler who was removed falls back to "All"
+  const currentView = view === 'all' || view === 'shared' || travelers.some((p) => p.id === view) ? view : 'all';
+  const person = travelers.find((p) => p.id === currentView);
+  // New items and templates go to the person whose tab is open, else shared
+  const targetOwner = person ? person.id : null;
+  const nameOf = (ownerId) => (travelers.find((p) => p.id === ownerId) || {}).name || '';
+
   const loaded = checklist.tripId === id;
-  const items = loaded ? checklist.items : [];
+  const allItems = loaded ? checklist.items : [];
+  const items = travelers.length ? itemsFor(allItems, currentView) : allItems;
+  const targetItems = itemsFor(allItems, targetOwner || 'shared');
   const { done, total } = progress(items);
   const shown = hidePacked ? items.filter((item) => !item.done) : items;
   const percent = total ? Math.round((done / total) * 100) : 0;
+  const progressText = (() => {
+    const counts = { done: String(done), total: String(total) };
+    if (done === total) return person ? t('packing.personAllDone', { name: person.name }) : t('packing.allDone');
+    if (person) return t('packing.personProgress', { ...counts, name: person.name });
+    if (currentView === 'shared') return t('packing.personProgress', { ...counts, name: t('packing.view.shared') });
+    return t('packing.progress', counts);
+  })();
+
+  // The tabs: All · Shared · each traveler, with their progress
+  const tabs = travelers.length === 0 ? [] : [
+    { view: 'all', label: t('packing.view.all'), list: allItems },
+    { view: 'shared', label: t('packing.view.shared'), list: itemsFor(allItems, 'shared') },
+    ...travelers.map((p) => ({ view: p.id, label: p.name, list: itemsFor(allItems, p.id) }))
+  ];
 
   async function add(event) {
     event.preventDefault();
@@ -156,7 +192,7 @@ export function TripPacking({ id }) {
       return;
     }
     try {
-      await addItem(id, { text, category });
+      await addItem(id, { text, category, ownerId: targetOwner });
       setText('');
       await reloadChecklist(id);
       document.getElementById('packing-new-text')?.focus(); // ready for the next item
@@ -221,14 +257,24 @@ export function TripPacking({ id }) {
       </a>
       <h1 class="screen-title screen-head">${t('dashboard.tiles.packing')}</h1>
 
+      ${tabs.length > 0 && html`
+        <div class="view-tabs" role="group" aria-label=${t('packing.viewLabel')}>
+          ${tabs.map((tab) => html`
+            <button type="button" key=${tab.view} class="view-tab" aria-pressed=${currentView === tab.view}
+              onClick=${() => setView(tab.view)}>
+              <span class="view-tab-name">${tab.label}</span>
+              <span class="view-tab-count">${progress(tab.list).done}/${tab.list.length}</span>
+            </button>`)}
+        </div>`}
+
       ${total > 0 && html`
         <div class="pack-progress">
           <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax=${total} aria-valuenow=${done}
-            aria-label=${t('packing.progress', { done: String(done), total: String(total) })}>
+            aria-label=${progressText}>
             <div class="progress-bar" style=${{ width: percent + '%' }}></div>
           </div>
           <p class="pack-progress-text">
-            ${done === total ? t('packing.allDone') : t('packing.progress', { done: String(done), total: String(total) })}
+            ${progressText}
           </p>
         </div>`}
 
@@ -277,17 +323,18 @@ export function TripPacking({ id }) {
           </h2>
           <ul class="pack-list">
             ${group.items.map((item) => html`
-              <${ItemRow} key=${item.id} item=${item} onToggle=${toggle} onEdit=${setEditing} />`)}
+              <${ItemRow} key=${item.id} item=${item} onToggle=${toggle} onEdit=${setEditing}
+                ownerName=${currentView === 'all' && item.ownerId ? nameOf(item.ownerId) : ''} />`)}
           </ul>
         </section>`)}
 
       ${hidePacked && total > 0 && shown.length === 0 && html`
         <p class="pack-all-hidden">${t('packing.allDone')}</p>`}
 
-      ${picking && html`<${TemplatePicker} trip=${trip} items=${items} onClose=${() => setPicking(false)} />`}
+      ${picking && html`<${TemplatePicker} trip=${trip} items=${targetItems} ownerId=${targetOwner} onClose=${() => setPicking(false)} />`}
       ${savingTemplate && html`<${SaveTemplateDialog} trip=${trip} items=${items} onClose=${() => setSavingTemplate(false)} />`}
       ${editing && html`
-        <${EditItemDialog} item=${editing} onClose=${() => setEditing(null)} onDelete=${() => remove(editing)} />`}
+        <${EditItemDialog} item=${editing} travelers=${travelers} onClose=${() => setEditing(null)} onDelete=${() => remove(editing)} />`}
       <${ConfirmDialog}
         open=${confirmingReset}
         title=${t('packing.resetTitle')}

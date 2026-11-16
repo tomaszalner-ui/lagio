@@ -58,10 +58,11 @@ export async function addItem(tripId, input) {
   });
 }
 
-// Changes text, category or quantity
+// Changes text, category, quantity or owner
 export function updateItem(id, changes) {
   assertValid({ text: 'x', ...changes });
   const clean = {};
+  if (changes.ownerId !== undefined) clean.ownerId = changes.ownerId || null;
   if (changes.text !== undefined) clean.text = String(changes.text).trim();
   if (changes.category !== undefined) clean.category = changes.category;
   if (changes.quantity !== undefined) clean.quantity = Number.isInteger(changes.quantity) ? changes.quantity : null;
@@ -109,9 +110,10 @@ export function newItemsOnly(existing, items) {
   return result;
 }
 
-// Adds the items that are not on the list yet. Returns the new ids (for Undo).
+// Adds the items that are not yet on that person's list (or the shared list
+// for ownerId null). Returns the new ids (for Undo).
 export async function addItems(tripId, items, { ownerId = null } = {}) {
-  const existing = await listItems(tripId);
+  const existing = (await listItems(tripId)).filter((item) => (item.ownerId || null) === ownerId);
   const ids = [];
   for (const item of newItemsOnly(existing, items)) {
     const created = await addItem(tripId, { ...item, ownerId });
@@ -123,6 +125,13 @@ export async function addItems(tripId, items, { ownerId = null } = {}) {
 // Undo for addItems()
 export async function removeItems(ids) {
   for (const id of ids) await softDelete('checklistItems', id);
+}
+
+// The items of one view: 'all', 'shared' (ownerId null) or a traveler's id
+export function itemsFor(items, view) {
+  if (view === 'all') return items;
+  if (view === 'shared') return items.filter((item) => !item.ownerId);
+  return items.filter((item) => item.ownerId === view);
 }
 
 // { done: 12, total: 30 }

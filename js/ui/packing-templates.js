@@ -24,7 +24,9 @@ function resolve(template, trip, own) {
   }));
 }
 
-export function TemplatePicker({ trip, items, onClose }) {
+// items: the list the templates go to (one person's, or the shared one);
+// ownerId: that person (null = shared)
+export function TemplatePicker({ trip, items, ownerId = null, onClose }) {
   const [selected, setSelected] = useState(() => new Set(['essentials']));
   const [own, setOwn] = useState([]);
   const [renaming, setRenaming] = useState(null);   // { id, name }
@@ -52,7 +54,7 @@ export function TemplatePicker({ trip, items, onClose }) {
   async function add() {
     setSaving(true);
     try {
-      const ids = await addItems(trip.id, toAdd);
+      const ids = await addItems(trip.id, toAdd, { ownerId });
       await reloadChecklist(trip.id);
       onClose();
       showToast({

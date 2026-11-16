@@ -9,6 +9,7 @@
 //   coverColor    one of COVER_COLORS (a name, not a colour code)
 //   currency      'EUR', …
 //   archived      true / false
+//   travelers     [{ id, name }] (optional) — for per-person packing lists
 // A trip's own tripId is its id, so "everything of this trip" (the trip
 // itself included) can be found with one tripId lookup in every store.
 //
@@ -34,6 +35,20 @@ export function validateTrip(input) {
 }
 
 // Keeps only the fields a trip may have, cleaned up.
+// Travelers: names trimmed, empty and repeated names dropped; each keeps its
+// id (new ones get one), because packing items point to it (ownerId)
+function cleanTravelers(list) {
+  const seen = new Set();
+  return (list || [])
+    .map((person) => ({ id: person.id || newId(), name: String(person.name || '').trim() }))
+    .filter((person) => {
+      const key = person.name.toLocaleLowerCase();
+      if (!person.name || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+}
+
 function cleanTrip(input) {
   const seen = new Set();
   const destinations = (input.destinations || [])
@@ -50,7 +65,8 @@ function cleanTrip(input) {
     startDate: input.startDate || '',
     endDate: input.endDate || '',
     coverColor: COVER_COLORS.includes(input.coverColor) ? input.coverColor : COVER_COLORS[0],
-    currency: CURRENCIES.includes(input.currency) ? input.currency : DEFAULT_CURRENCY
+    currency: CURRENCIES.includes(input.currency) ? input.currency : DEFAULT_CURRENCY,
+    travelers: cleanTravelers(input.travelers)
   };
 }
 
@@ -82,7 +98,13 @@ export async function updateTrip(id, changes) {
   if (!existing) throw new Error('Trip not found: ' + id);
   const merged = { ...existing, ...changes };
   assertValid(merged);
-  return update('trips', id, cleanTrip(merged));
+  const saved = await update('trips', id, cleanTrip(merged));
+  // A traveler was removed: their packing items become shared, nothing is lost
+  const kept = new Set(saved.travelers.map((person) => person.id));
+  for (const item of await list('checklistItems', { tripId: id })) {
+    if (item.ownerId && !kept.has(item.ownerId)) await update('checklistItems', item.id, { ownerId: null });
+  }
+  return saved;
 }
 
 // Fills in fields that a trip saved by an older version may not have,
@@ -95,6 +117,7 @@ function withDefaults(trip) {
     coverColor: COVER_COLORS[0],
     currency: DEFAULT_CURRENCY,
     archived: false,
+    travelers: [],
     ...trip
   };
 }

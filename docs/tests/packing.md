@@ -38,3 +38,21 @@ Phone test by the owner on 2026-11-16 (version 0.5.0): adding items works.
 | 9 | Duplicate a trip whose list has ticks. | The copy has the whole list, nothing ticked, ×N kept; the original keeps its ticks. | ✔ |
 | 10 | EN; airplane mode; 360 px. | "Essentials, Beach, City, Winter", items "Passport or ID card…", "25 items added"; templates work offline; the picker fits without sideways scrolling. | ✔ |
 | 11 | Phone: start a real list from templates. | Lithuanian wording reads well; nothing important is missing. | Phone |
+
+## Step 5c: travelers and per-person lists (version 0.5.2)
+
+✔ = passed in headless Edge on 2026-11-16. "Phone" = to check on the owner's phone.
+
+| # | Steps | Expected | Result |
+| --- | --- | --- | --- |
+| 1 | Trip form → **Keliautojai**: add Tomas, Ieva, then "tomas". | Two chips (the repeated name is ignored); hint "Nebūtina. Įrašius vardus…". | ✔ |
+| 2 | Packing list of that trip. | Tabs **Visi · Bendri · Tomas · Ieva** with counts ("0/0"); "Visi" selected. | ✔ |
+| 3 | Add an item on "Visi"; one on "Tomas". | The first goes to "Bendri", the second to Tomas. | ✔ |
+| 4 | On "Ieva" → Pridėti iš šablono → Būtiniausi; then the same on "Tomas". | Each gets their own 25 items (a template counts per person, so both get a toothbrush); "Ieva: 0 iš 25 sudėta". | ✔ |
+| 5 | Tick one of Tomas's items; open "Visi". | "Tomas: 1 iš 26 sudėta"; tab counts "Visi 1/52 · Bendri 0/1 · Tomas 1/26 · Ieva 0/25"; on "Visi" each item shows its owner's name tag. | ✔ |
+| 6 | Pencil on Tomas's item → **Kieno** → Ieva → Išsaugoti. | It moves to Ieva's list. | ✔ |
+| 7 | Trip form: tap "Ieva" → rename to "Ieva K."; remove Tomas → Išsaugoti. | Ieva keeps her items under the new name; Tomas's 26 items move to "Bendri"; no item points to a removed traveler. | ✔ |
+| 8 | Export → import as a copy; duplicate the trip. | Travelers come along; every owned item still points to a traveler of that trip. | ✔ |
+| 9 | A trip without travelers. | No tabs; the list works as before. | ✔ |
+| 10 | EN; 360 px; airplane mode. | "All · Shared · Ieva K.", "Ieva K.: 1 of 26 packed"; the tab row scrolls sideways inside itself, the page does not; tabs and adding work offline. | ✔ |
+| 11 | Phone: a real family/group list. | Owner's judgement. | Phone |

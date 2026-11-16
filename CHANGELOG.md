@@ -2,6 +2,7 @@
 
 One line per version: date, version, what changed in plain words.
 
+- 2026-11-16 · 0.5.2 · Travelers: add names to a trip; the packing list then has tabs Visi · Bendri · each person, with their own items, templates and progress. Removing a traveler moves their items to Bendri.
 - 2026-11-16 · 0.5.1 · Packing templates: Būtiniausi, Paplūdimys, Miestas, Žiema (socks and underwear per trip day, up to ×7), your own templates (save, rename, delete), no duplicates, Undo. Duplicating a trip copies its packing list unticked.
 - 2026-11-16 · 0.5.0 · Packing list: add items by category, tick them off, quantity ×N, hide packed, start over (with Undo); progress on the trip screen. Travels in the trip file.
 - 2026-11-16 · 0.4.2 · Backup reminder: a slim strip on the trip screen when bookings or tickets changed since the last export; Eksportuoti or ✕ (hidden until the next change). Not shown for finished or archived trips.

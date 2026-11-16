@@ -23,17 +23,26 @@ const ERROR_TEXT = {
   endDate: { beforeStart: 'tripForm.error.endBeforeStart' }
 };
 
+// Text keys for the travelers field
+const TRAVELER_LABELS = {
+  placeholder: 'tripForm.travelerPlaceholder',
+  add: 'tripForm.addTraveler',
+  remove: 'tripForm.removeTraveler',
+  rename: 'tripForm.renameTraveler'
+};
+
 // Field order, for moving the focus to the first error
 const FIELD_ORDER = ['name', 'startDate', 'endDate'];
 
 function initialValues(trip, tripCount) {
   if (trip) {
-    const { name, destinations, startDate, endDate, coverColor, currency } = trip;
-    return { name, destinations, startDate, endDate, coverColor, currency };
+    const { name, destinations, startDate, endDate, coverColor, currency, travelers } = trip;
+    return { name, destinations, startDate, endDate, coverColor, currency, travelers: travelers || [] };
   }
   return {
     name: '',
     destinations: [],
+    travelers: [],
     startDate: '',
     endDate: '',
     coverColor: COVER_COLORS[tripCount % COVER_COLORS.length], // a new colour each time
@@ -116,6 +125,16 @@ export function TripForm({ id }) {
             id="trip-places"
             value=${values.destinations}
             onChange=${(list) => set('destinations', list)}
+          />
+        <//>
+
+        <${Field} id="trip-travelers" label=${t('tripForm.travelers')} hint=${t('tripForm.travelersHint')}>
+          <${PlacesInput}
+            id="trip-travelers"
+            value=${values.travelers}
+            editable=${true}
+            labels=${TRAVELER_LABELS}
+            onChange=${(list) => set('travelers', list)}
           />
         <//>
 

@@ -75,6 +75,7 @@ Technical decisions made while building (the full list is in the plan doc and th
 | Backup reminder | Slim strip on the dashboard when the trip has bookings/documents and changed (any record updatedAt) since the last export and since ✕; before and during the trip, never after or when archived. Import counts as a backup |
 | Packing list | One list per trip (`listName` "packing"), 6 fixed categories (keys), optional `quantity` ×2–99, `ownerId` null = shared. Steps: 5a list, 5b templates (built-in texts in lang files; own templates in settings), 5c travelers on the trip + per-person lists |
 | Packing templates | Built-in: Būtiniausi (pre-ticked), Paplūdimys, Miestas, Žiema; item texts are lang keys, saved as text in the current language; `perDay` = trip days up to 7, ×1 means none. Own templates in setting `packingTemplates` keep the quantities they were saved with. Duplicate copies the list unticked |
+| Travelers | Optional `travelers: [{ id, name }]` on the trip; packing items point to one with `ownerId` (null = Bendri). Removing a traveler moves their items to Bendri. Traveler ids only matter inside one trip, so copies keep them. Templates and "already on the list" work per person |
 | Booking types | flight, train, bus, ferry, car, stay, event, other; start/end labels follow the type. Address opens a Google Maps search link (tapped by the user, not fetched) |
 
 ## Build order (phase 1)
