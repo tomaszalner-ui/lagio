@@ -39,7 +39,7 @@ Manual test cases are in `docs/tests/`.
 
 ## Publish a new version
 
-1. Raise `VERSION` in `sw.js` and add a line to `CHANGELOG.md`.
+1. Run `node tools/update-sw.mjs <new version>` and add a line to `CHANGELOG.md`.
 2. Commit and push to `main`. GitHub Pages publishes it in a minute or two:
    https://tomaszalner-ui.github.io/lagio/
 3. Open the site on the phone: a "new version available" banner appears. Tap *Update*.

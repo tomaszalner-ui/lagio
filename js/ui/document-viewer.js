@@ -1,6 +1,6 @@
 // document-viewer.js — a full-screen view of one document.
-// Images show inside the app. PDFs are shown with the browser's own PDF
-// viewer where the phone has one; the buttons below offer other ways:
+// Images show inside the app; PDFs are drawn page by page with PDF.js
+// (see pdf-view.js). The buttons below offer other ways:
 //   Open in browser  the file in a new tab
 //   Share            send it to another app (if the phone supports it)
 //   Download         save a copy to the phone's Downloads
@@ -16,6 +16,7 @@ import { documentKind, loadDocumentBlob } from '../modules/documents.js';
 import { Modal } from './dialog.js';
 import { CloseIcon } from './illustrations.js';
 import { showToast } from './toast.js';
+import { PdfView } from './pdf-view.js';
 
 export function DocumentViewer({ doc, onClose, onDelete }) {
   const [blob, setBlob] = useState(null);
@@ -79,7 +80,7 @@ export function DocumentViewer({ doc, onClose, onDelete }) {
   let preview = null;
   if (missing) preview = html`<p class="viewer-message">${t('viewer.missing')}</p>`;
   else if (url && kind === 'image') preview = html`<img class="viewer-image" src=${url} alt=${name} />`;
-  else if (url && kind === 'pdf') preview = html`<iframe class="viewer-frame" src=${url} title=${name}></iframe>`;
+  else if (blob && kind === 'pdf') preview = html`<${PdfView} blob=${blob} />`;
   else if (url) preview = html`<p class="viewer-message">${t('viewer.noPreview')}</p>`;
 
   return html`
@@ -90,7 +91,7 @@ export function DocumentViewer({ doc, onClose, onDelete }) {
           <${CloseIcon} />
         </button>
       </div>
-      <div class="viewer-body">${preview}</div>
+      <div class=${'viewer-body' + (kind === 'pdf' ? ' is-pdf' : '')}>${preview}</div>
       <div class="viewer-actions">
         <button type="button" class="button" disabled=${!url} onClick=${openInBrowser}>${t('viewer.openBrowser')}</button>
         ${canShare && html`

@@ -231,6 +231,12 @@ export function getFile(id, options) {
   return get('files', id, options);
 }
 
+// Frees the space of a deleted file: removes its content but keeps the small
+// record (with deletedAt), so a future sync still knows it was deleted.
+export function dropFileContent(id) {
+  return modify('files', id, () => ({ blob: null, contentRemovedAt: now() }));
+}
+
 // ---------- settings ----------
 // Settings are records too (id = the setting's name, tripId = null).
 

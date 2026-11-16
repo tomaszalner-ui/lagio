@@ -2,6 +2,7 @@
 
 One line per version: date, version, what changed in plain words.
 
+- 2026-11-16 · 0.3.2 · PDFs now show every page inside the app with pinch and +/− zoom (PDF.js, works offline). Flights, trains, buses and ferries may arrive "before" they leave when crossing time zones (a note instead of an error); date errors use the field names. Space of deleted files is freed after 7 days.
 - 2026-11-16 · 0.3.1 · Bookings: add flights, trains, stays and more with times, code, address, price and note; list grouped by day; copy the code, open the address in maps, edit and delete (with Undo).
 - 2026-11-16 · 0.3.0 · Documents: add PDFs and photos to a trip, view them full screen, share, download or delete them (with Undo). Everything opens offline.
 - 2026-11-16 · 0.2.1 · Trip form: start and end date stay level when an error shows. Duplicating a trip leaves the copy without dates.

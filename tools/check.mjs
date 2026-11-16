@@ -8,10 +8,9 @@
 // Prints problems and exits with code 1 if there are any.
 
 import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join, relative, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { join, relative } from 'node:path';
+import { ROOT, appFiles as listAppFiles } from './app-files.mjs';
 
-const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const problems = [];
 const warnings = [];
 
@@ -147,20 +146,12 @@ for (const file of jsFiles.filter((f) => f.startsWith('js/ui/'))) {
 // ---------- 4. offline file list ----------
 const sw = read('sw.js');
 const listed = new Set([...sw.matchAll(/^\s*'([^']+)',?$/gm)].map((m) => m[1]));
-const appFiles = [
-  'index.html',
-  'manifest.json',
-  ...filesIn('css'),
-  ...jsFiles,
-  ...filesIn('lang'),
-  ...filesIn('icons'),
-  ...filesIn('vendor').filter((f) => f.endsWith('.js'))
-];
+const appFiles = listAppFiles();
 for (const file of appFiles) {
-  if (!listed.has(file)) problems.push(`sw.js FILES is missing "${file}" (it would not work offline)`);
+  if (!listed.has(file)) problems.push(`sw.js FILES is missing "${file}" (run: node tools/update-sw.mjs)`);
 }
 for (const file of listed) {
-  if (file !== './' && !appFiles.includes(file)) problems.push(`sw.js FILES lists "${file}", which does not exist`);
+  if (!appFiles.includes(file)) problems.push(`sw.js FILES lists "${file}", which does not exist (run: node tools/update-sw.mjs)`);
 }
 
 // ---------- 5. storage and network rules ----------

@@ -43,3 +43,46 @@ clean-up is added. Planned for step 3c.
 | 11 | EN; 360 px; airplane mode; data from 0.3.0. | "Sunday 20 December", "Departure", "20 December 06:10"; no sideways scrolling; list, booking and form work offline; 0.3.0 documents still there. | ✔ |
 
 Checked in code: price parsing ("49,99" and "49.99" → 4999, "1 250" → 125000, "12,345" and "abc" rejected, JPY without cents).
+
+## Fixes from review (version 0.3.2)
+
+✔ = passed in headless Edge on 2026-11-16. "Phone" = to check on the owner's phone.
+
+### Fix 1: space of deleted files is freed after 7 days
+
+| # | Steps | Expected | Result |
+| --- | --- | --- | --- |
+| 1.1 | Delete a document; run the clean-up as if 6 days had passed; tap Undo. | Nothing is freed; the restored document still opens. | ✔ |
+| 1.2 | Delete it again; run the clean-up as if 8 days had passed. | Its content is removed (`blob` empty, `contentRemovedAt` set); the record stays with `deletedAt`; `version` goes up. | ✔ |
+| 1.3 | The same clean-up with a document that was never deleted. | Untouched; it still opens. A second clean-up frees nothing more. | ✔ |
+| 1.4 | A file deleted 10 days ago; open the app. | About 3 seconds after start its content is removed, without slowing the first screen. | ✔ |
+
+### Fix 2: arrival before departure on travel bookings
+
+| # | Steps | Expected | Result |
+| --- | --- | --- | --- |
+| 2.1 | Flight 20 Dec 21:00 → 20 Dec 09:00 (Tokyo → Honolulu). | Yellow note "Atvykimas anksčiau nei išvykimas…", no error; it saves; card "21:00–09:00". | ✔ |
+| 2.2 | Flight 21 Dec 00:30 → 20 Dec 13:00 (previous calendar day). | The end date can be picked before the start; note shown; it saves. | ✔ |
+| 2.3 | Flight arriving 3 days before departure. | Blocked: "Atvykimas negali būti daugiau nei parą anksčiau už išvykimą." | ✔ |
+| 2.4 | Ferry exactly 26 hours earlier. | Allowed with the note (26 h is the limit). | ✔ |
+| 2.5 | Stay with check-out one minute before check-in. | Blocked; the end date picker does not allow days before the start. | ✔ |
+
+### Fix 3: error texts use the field names
+
+| # | Steps | Expected | Result |
+| --- | --- | --- | --- |
+| 3.1 | End before start for stay, car rental, event. | "Išsiregistravimas negali būti anksčiau už įsiregistravimą.", "Grąžinimas negali būti anksčiau už paėmimą.", "Pabaiga negali būti anksčiau už pradžią." | ✔ |
+| 3.2 | Only an end date for flight, stay, car rental. | "Nurodykite ir išvykimo datą.", "…įsiregistravimo datą.", "…paėmimo datą." | ✔ |
+| 3.3 | The same in English. | "Arrival can't be more than a day before departure.", "Add a check-in date too.", note "Arrival is before departure…" | ✔ |
+
+### Fix 4: PDFs drawn with PDF.js
+
+| # | Steps | Expected | Result |
+| --- | --- | --- | --- |
+| 4.1 | Open a 3-page PDF. | All 3 pages, each fitted to the width, labelled "1 psl. iš 3"…; text and colours drawn correctly. | ✔ |
+| 4.2 | Tap **+**, then **−**. | Pages redraw larger (344 → 516 px) and back; pages far away are cleared to save memory. | ✔ |
+| 4.3 | Pinch with two fingers. | Pages grow while pinching and are redrawn sharp when the fingers lift; the spot under the fingers stays in place; the app's header and buttons do not zoom. | ✔ (simulated touch) · Phone |
+| 4.4 | Open a damaged PDF. | "Šio PDF nepavyko parodyti…"; Atidaryti naršyklėje / Bendrinti / Atsisiųsti / Ištrinti still work. | ✔ |
+| 4.5 | Airplane mode: open the 3-page PDF. | All pages drawn (PDF.js, its worker and fonts are cached: 232 offline files). | ✔ |
+| 4.6 | A real ticket PDF on Android Chrome and/or iPhone Safari, from the installed app. | Every page shows inside Lagio; zoom works; nothing is blank. | Phone |
+| 4.7 | Data from 0.3.1. | Updates; its PDF opens with PDF.js. The update banner still appears while the app is open (bigger download). | ✔ |

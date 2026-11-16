@@ -32,10 +32,10 @@ Run `node tools/check.mjs` before every commit (language keys, hard-coded text, 
 /js/ui/       screens and shared components (html.js, shell.js, empty-state.js, …)
 /lang/        lt.json en.json (flat keys like "home.title"; plurals as {one, few, many, other})
 /css/  /icons/  /vendor/ (preact, htm, jszip + README with versions)
-/tools/       serve.mjs (local server) check.mjs (pre-commit checks)
+/tools/       serve.mjs (local server) check.mjs (pre-commit checks) update-sw.mjs (offline file list + version)
 /docs/tests/  written test cases per milestone
 ```
-When adding a file the app loads, also add it to `FILES` in `sw.js`.
+When adding a file the app loads, run `node tools/update-sw.mjs` (rewrites the `FILES` list in `sw.js`; `node tools/update-sw.mjs 0.3.3` also sets the version).
 
 ## Rules that must never break
 1. Only `js/db.js` touches IndexedDB. Everything else calls its functions.
@@ -65,6 +65,9 @@ Technical decisions made while building (the full list is in the plan doc and th
 | Duplicating a trip | Copies name, places, colour and currency; no dates |
 | Document ↔ booking | Only the document's `bookingId` links them; bookings have no `documentIds[]` |
 | Files | PDF or image; ask before adding a file over 20 MB; show space used per trip. File content in `files`, description in `documents` |
+| PDF viewer | PDF.js 6.5.438 legacy build in `vendor/pdfjs/` (with cmaps and standard fonts), loaded only when a PDF opens; pages drawn to canvas near the screen; pinch and +/− zoom |
+| Deleted files | Content freed on app start once deleted more than 7 days ago (`purgeDeletedFiles`); the record stays with `deletedAt` and `contentRemovedAt` |
+| Travel times | Flight, train, bus, ferry may end up to 26 h "before" they start (time zones): a note, not an error. Stays and car rentals stay strict |
 | Booking types | flight, train, bus, ferry, car, stay, event, other; start/end labels follow the type. Address opens a Google Maps search link (tapped by the user, not fetched) |
 
 ## Build order (phase 1)

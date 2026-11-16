@@ -8,7 +8,7 @@
 // bookingId links a document to one booking (milestone 3c);
 // null means it belongs to the whole trip.
 
-import { create, list, softDelete, restore, putFile, getFile } from '../db.js';
+import { create, list, softDelete, restore, putFile, getFile, dropFileContent } from '../db.js';
 
 // Files above this size ask before they are added (20 MB)
 export const LARGE_FILE_BYTES = 20 * 1024 * 1024;
@@ -70,4 +70,25 @@ export async function undoDeleteDocument(deleted) {
   for (const { store, id } of deleted) {
     await restore(store, id);
   }
+}
+
+// ---------- clean-up ----------
+
+// Deleted files keep their content this long, so Undo can still bring them back
+export const KEEP_DELETED_DAYS = 7;
+
+// Frees the space of files deleted more than KEEP_DELETED_DAYS ago (in any
+// trip). Their small records stay. `now` can be passed in for testing.
+// Returns how many files were freed.
+export async function purgeDeletedFiles({ now = new Date() } = {}) {
+  const cutoff = new Date(now.getTime() - KEEP_DELETED_DAYS * 86400000).toISOString();
+  const files = await list('files', { includeDeleted: true });
+  let freed = 0;
+  for (const file of files) {
+    if (file.deletedAt && file.deletedAt < cutoff && file.blob) {
+      await dropFileContent(file.id);
+      freed += 1;
+    }
+  }
+  return freed;
 }

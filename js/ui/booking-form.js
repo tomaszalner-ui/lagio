@@ -10,19 +10,41 @@ import { t, currencyName, parseAmount, amountForInput } from '../i18n.js';
 import { navigate, paths } from '../router.js';
 import { CURRENCIES } from '../modules/trips.js';
 import {
-  BOOKING_TYPES, validateBooking, createBooking, updateBooking, joinDateTime, splitDateTime
+  BOOKING_TYPES, validateBooking, bookingNotices, createBooking, updateBooking,
+  joinDateTime, splitDateTime, timeLabelKind
 } from '../modules/bookings.js';
 import { Field } from './field.js';
 import { NotFound } from './not-found.js';
 import { showToast } from './toast.js';
 import { TYPE_INFO, TypeIcon, timeLabels } from './booking-parts.js';
 
-// Error code from validateBooking() -> text key
+// Error code from validateBooking() -> text key. The date errors use the
+// same words as the fields ("Atvykimas… išvykimą"), so they depend on the
+// kind of booking: travel, stay, car or other.
 const ERROR_TEXT = {
   title: { required: 'bookingForm.error.titleRequired' },
-  startAt: { requiredWithEnd: 'bookingForm.error.startRequired' },
-  endAt: { beforeStart: 'bookingForm.error.endBeforeStart' },
+  startAt: {
+    requiredWithEnd: {
+      travel: 'bookingForm.error.startRequired.travel',
+      stay: 'bookingForm.error.startRequired.stay',
+      car: 'bookingForm.error.startRequired.car',
+      other: 'bookingForm.error.startRequired.other'
+    }
+  },
+  endAt: {
+    beforeStart: {
+      travel: 'bookingForm.error.endBeforeStart.travel',
+      stay: 'bookingForm.error.endBeforeStart.stay',
+      car: 'bookingForm.error.endBeforeStart.car',
+      other: 'bookingForm.error.endBeforeStart.other'
+    }
+  },
   price: { invalid: 'bookingForm.error.priceInvalid' }
+};
+
+// Notice code from bookingNotices() -> text key
+const NOTICE_TEXT = {
+  arrivalBeforeDeparture: 'bookingForm.notice.arrivalBeforeDeparture'
 };
 
 // Which input to focus for each error, in screen order
@@ -73,6 +95,9 @@ function BookingFormFields({ trip, booking }) {
   const latest = useRef(values); // newest values right away (see trip-form.js)
 
   const labels = timeLabels(values.type);
+  const kind = timeLabelKind(values.type);
+  const isTravel = kind === 'travel';
+  const notices = bookingNotices(toBooking(values)); // shown while typing; never block saving
   const backTo = booking ? paths.booking(trip.id, booking.id) : paths.tripBookings(trip.id);
 
   function set(field, value) {
@@ -84,7 +109,9 @@ function BookingFormFields({ trip, booking }) {
 
   function errorText(field) {
     const code = errors[field];
-    return code ? t(ERROR_TEXT[field][code]) : '';
+    if (!code) return '';
+    const key = ERROR_TEXT[field][code];
+    return t(typeof key === 'string' ? key : key[kind]);
   }
 
   async function save(event) {
@@ -124,7 +151,7 @@ function BookingFormFields({ trip, booking }) {
             type="date"
             aria-label=${t('bookingForm.date')}
             value=${values[dateField]}
-            min=${which === 'end' ? values.startDate || undefined : undefined}
+            min=${which === 'end' && !isTravel ? values.startDate || undefined : undefined}
             aria-invalid=${!!errors[errorField]}
             onInput=${(event) => set(dateField, event.currentTarget.value)}
           />
@@ -139,6 +166,8 @@ function BookingFormFields({ trip, booking }) {
           />
         </div>
         ${errors[errorField] && html`<p class="field-error" role="alert">${errorText(errorField)}</p>`}
+        ${!errors[errorField] && notices[errorField] && html`
+          <p class="field-note" role="status">${t(NOTICE_TEXT[notices[errorField]])}</p>`}
       </fieldset>`;
   }
 

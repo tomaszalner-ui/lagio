@@ -8,6 +8,7 @@ import { openDb } from './db.js';
 import { initI18n } from './i18n.js';
 import { startRouter } from './router.js';
 import { registerServiceWorker } from './pwa.js';
+import { purgeDeletedFiles } from './modules/documents.js';
 import { Shell } from './ui/shell.js';
 
 async function start() {
@@ -30,6 +31,12 @@ async function start() {
   }
 
   render(html`<${Shell} />`, document.getElementById('app'));
+
+  // Housekeeping once the first screen is showing: free the space of files
+  // deleted more than 7 days ago. Never in the way of the user.
+  setTimeout(() => {
+    purgeDeletedFiles().catch((error) => console.error('Clean-up failed:', error));
+  }, 3000);
 }
 
 start();

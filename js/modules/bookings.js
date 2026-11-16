@@ -47,16 +47,54 @@ function endKey(value) {
   return value.includes('T') ? value : value + 'T23:59';
 }
 
+// '2026-12-20T06:10' -> minutes, for differences only (no time zones involved)
+function toMinutes(key) {
+  const [date, time] = key.split('T');
+  const [y, m, d] = date.split('-').map(Number);
+  const [hh, mm] = time.split(':').map(Number);
+  return Date.UTC(y, m - 1, d, hh, mm) / 60000;
+}
+
+// Minutes from start to end; negative when the end is earlier.
+function endMinusStart(input) {
+  return toMinutes(endKey(input.endAt)) - toMinutes(startKey(input.startAt));
+}
+
+// Times are local, so on a flight, train, bus or ferry the arrival can be
+// "earlier" than the departure when crossing time zones (Tokyo 21:00 →
+// Honolulu 09:00 the same day). The largest time-zone difference on Earth is
+// 26 hours, so anything earlier than that is a typo.
+const TRAVEL_EARLIER_LIMIT_MINUTES = 26 * 60;
+
 // Problems as codes, e.g. { title: 'required', endAt: 'beforeStart' }.
 // price must be null (unknown) or whole cents; NaN means "could not read it".
 export function validateBooking(input) {
   const errors = {};
   if (!String(input.title || '').trim()) errors.title = 'required';
   if (input.endAt && !input.startAt) errors.startAt = 'requiredWithEnd';
-  if (input.startAt && input.endAt && endKey(input.endAt) < startKey(input.startAt)) errors.endAt = 'beforeStart';
+  if (input.startAt && input.endAt) {
+    const difference = endMinusStart(input);
+    const travel = timeLabelKind(input.type) === 'travel';
+    if (difference < 0 && (!travel || -difference > TRAVEL_EARLIER_LIMIT_MINUTES)) {
+      errors.endAt = 'beforeStart';
+    }
+  }
   const price = input.price;
   if (price !== null && price !== undefined && !(Number.isInteger(price) && price >= 0)) errors.price = 'invalid';
   return errors;
+}
+
+// Things worth pointing out that do not stop saving, as codes:
+// { endAt: 'arrivalBeforeDeparture' } for travel across time zones.
+export function bookingNotices(input) {
+  const notices = {};
+  if (input.startAt && input.endAt && timeLabelKind(input.type) === 'travel') {
+    const difference = endMinusStart(input);
+    if (difference < 0 && -difference <= TRAVEL_EARLIER_LIMIT_MINUTES) {
+      notices.endAt = 'arrivalBeforeDeparture';
+    }
+  }
+  return notices;
 }
 
 function cleanBooking(input) {
