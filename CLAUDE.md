@@ -68,13 +68,15 @@ Technical decisions made while building (the full list is in the plan doc and th
 | PDF viewer | PDF.js 6.5.438 legacy build in `vendor/pdfjs/` (with cmaps and standard fonts), loaded only when a PDF opens; pages drawn to canvas near the screen; pinch and +/− zoom |
 | Deleted files | Content freed on app start once deleted more than 7 days ago (`purgeDeletedFiles`); the record stays with `deletedAt` and `contentRemovedAt` |
 | Travel times | Flight, train, bus, ferry may end up to 26 h "before" they start (time zones): a note, not an error. Stays and car rentals stay strict |
+| Trip file | `.lagio` zip: `trip.json` (`app`, `formatVersion` 1, `appVersion`, records per store) + `files/<id>` stored uncompressed. Deleted records are left out. Every store except `files`/`settings` must be in `EXPORTED_STORES` (check.mjs) |
+| Export flow | Two taps: prepare the file, then Bendrinti (if the phone can share it; iPhone yes, Android Chrome no) or Atsisiųsti. The app version lives in `js/version.js`, written by `update-sw.mjs` |
 | Booking types | flight, train, bus, ferry, car, stay, event, other; start/end labels follow the type. Address opens a Google Maps search link (tapped by the user, not fetched) |
 
 ## Build order (phase 1)
 1. Foundation ✓ (0.1.0, phone-tested 16 Nov 2026)
 2. Trips ✓ (0.2.1, phone-tested 16 Nov 2026)
-3. Bookings and documents  ← current
-4. Trip file export/import
+3. Bookings and documents ✓ (0.3.3, phone-tested 16 Nov 2026)
+4. Trip file export/import  ← current
 5. Packing checklist
 6. Itinerary
 7. Spending

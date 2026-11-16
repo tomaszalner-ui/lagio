@@ -97,6 +97,17 @@
   "date.range.sameYearWithYear": "{year1} m. {month1} {day1} d. – {month2} {day2} d.",
   "date.range.differentYears": "{year1} m. {month1} {day1} d. – {year2} m. {month2} {day2} d.",
 
+  "common.close": "Uždaryti",
+  "dashboard.export": "Eksportuoti kelionę",
+  "export.preparing": "Ruošiamas failas su visa kelione ir bilietais…",
+  "export.readyTitle": "Failas paruoštas",
+  "export.readyText": "„{name}“ ({size}): visa kelionė su bilietais. Išsaugokite jį saugioje vietoje arba nusiųskite kelionės draugams.",
+  "export.share": "Bendrinti",
+  "export.download": "Atsisiųsti",
+  "export.shared": "Failas perduotas",
+  "export.downloaded": "Failas „{name}“ išsaugotas atsisiuntimuose",
+  "export.failed": "Nepavyko paruošti failo. Bandykite dar kartą.",
+
   "delete.title": "Ištrinti kelionę?",
   "delete.text": "Kelionė „{name}“ ir visa jos informacija bus ištrinta. Iškart po to dar galėsite tai atšaukti.",
   "delete.confirm": "Ištrinti",

@@ -8,7 +8,7 @@
 //      "A new version is available". Tapping Update switches over.
 // FILES is written by tools/update-sw.mjs; `node tools/check.mjs` checks it.
 
-const VERSION = '0.3.3';
+const VERSION = '0.4.0';
 const CACHE = 'lagio-v' + VERSION;
 
 const FILES = [
@@ -25,6 +25,7 @@ const FILES = [
   'js/pwa.js',
   'js/router.js',
   'js/store.js',
+  'js/transfer.js',
   'js/ui/archive.js',
   'js/ui/booking-detail.js',
   'js/ui/booking-form.js',
@@ -34,6 +35,7 @@ const FILES = [
   'js/ui/document-section.js',
   'js/ui/document-viewer.js',
   'js/ui/empty-state.js',
+  'js/ui/export-dialog.js',
   'js/ui/field.js',
   'js/ui/home.js',
   'js/ui/html.js',
@@ -50,6 +52,7 @@ const FILES = [
   'js/ui/trip-dashboard.js',
   'js/ui/trip-form.js',
   'js/ui/update-banner.js',
+  'js/version.js',
   'lang/en.json',
   'lang/lt.json',
   'icons/apple-touch-icon.png',

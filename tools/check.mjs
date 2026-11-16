@@ -154,6 +154,25 @@ for (const file of listed) {
   if (!appFiles.includes(file)) problems.push(`sw.js FILES lists "${file}", which does not exist (run: node tools/update-sw.mjs)`);
 }
 
+// ---------- 4b. same version in sw.js and js/version.js ----------
+const swVersion = (sw.match(/const VERSION = '([^']*)'/) || [])[1];
+const appVersion = (read('js/version.js').match(/APP_VERSION = '([^']*)'/) || [])[1];
+if (swVersion !== appVersion) {
+  problems.push(`Version differs: sw.js ${swVersion}, js/version.js ${appVersion} (run: node tools/update-sw.mjs <version>)`);
+}
+
+// ---------- 4c. every data store goes into the trip file (rule 4) ----------
+const storeList = (source, name) => {
+  const block = (source.match(new RegExp(`${name} = \\[([\\s\\S]*?)\\]`)) || [])[1] || '';
+  return [...block.matchAll(/'([^']+)'/g)].map((m) => m[1]);
+};
+const exported = storeList(read('js/transfer.js'), 'EXPORTED_STORES');
+for (const store of storeList(read('js/db.js'), 'STORES')) {
+  if (!['files', 'settings'].includes(store) && !exported.includes(store)) {
+    problems.push(`Store "${store}" is not in EXPORTED_STORES in js/transfer.js (rule 4: everything goes into the trip file)`);
+  }
+}
+
 // ---------- 5. storage and network rules ----------
 for (const file of jsFiles) {
   const source = read(file);

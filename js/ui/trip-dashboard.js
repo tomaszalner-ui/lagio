@@ -13,6 +13,7 @@ import { ChevronLeft, MoreIcon, TicketIcon, CalendarIcon, ChecklistIcon, WalletI
 import { ActionSheet, ConfirmDialog } from './dialog.js';
 import { NotFound } from './not-found.js';
 import { archiveWithUndo, restoreFromArchive, duplicate, deleteWithUndo } from './trip-actions.js';
+import { ExportDialog } from './export-dialog.js';
 
 // The parts of a trip, in the order shown. A tile with `path` opens its
 // screen; the others are marked "coming soon" until their milestone.
@@ -70,6 +71,7 @@ export function TripDashboard({ id }) {
   const trips = useStore((s) => s.trips);
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const trip = trips.find((item) => item.id === id);
   if (!trip) return html`<${NotFound} />`;
@@ -79,6 +81,7 @@ export function TripDashboard({ id }) {
 
   const actions = [
     { label: t('dashboard.edit'), onClick: () => navigate(paths.tripEdit(trip.id)) },
+    { label: t('dashboard.export'), onClick: () => setExporting(true) },
     { label: t('dashboard.duplicate'), onClick: () => duplicate(trip) },
     trip.archived
       ? { label: t('dashboard.unarchive'), onClick: () => restoreFromArchive(trip) }
@@ -136,6 +139,7 @@ export function TripDashboard({ id }) {
         actions=${actions}
         onClose=${() => setMenuOpen(false)}
       />
+      ${exporting && html`<${ExportDialog} trip=${trip} onClose=${() => setExporting(false)} />`}
       <${ConfirmDialog}
         open=${confirmingDelete}
         title=${t('delete.title')}

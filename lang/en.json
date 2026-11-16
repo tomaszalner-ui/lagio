@@ -93,6 +93,17 @@
   "date.range.sameYearWithYear": "{day1} {month1} – {day2} {month2} {year1}",
   "date.range.differentYears": "{day1} {month1} {year1} – {day2} {month2} {year2}",
 
+  "common.close": "Close",
+  "dashboard.export": "Export trip",
+  "export.preparing": "Preparing a file with the whole trip and its tickets…",
+  "export.readyTitle": "File ready",
+  "export.readyText": "“{name}” ({size}): the whole trip with its tickets. Keep it somewhere safe or send it to your travel companions.",
+  "export.share": "Share",
+  "export.download": "Download",
+  "export.shared": "File shared",
+  "export.downloaded": "“{name}” saved to Downloads",
+  "export.failed": "Could not prepare the file. Please try again.",
+
   "delete.title": "Delete this trip?",
   "delete.text": "“{name}” and everything in it will be deleted. You can still undo this right after.",
   "delete.confirm": "Delete",

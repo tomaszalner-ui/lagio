@@ -105,3 +105,5 @@ Phone test by the owner on 2026-11-16 (version 0.3.2): PDF viewing, zoom and the
 | 8 | EN; plurals; 360 px; viewer with 5 buttons. | "Tickets and documents", "Other documents", "1 document"; 1 dokumentas / 2 dokumentai / 10 dokumentų / 21 dokumentas; buttons wrap on two lines without sideways scrolling. | ✔ |
 | 9 | Data from 0.3.2; airplane mode. | Earlier files appear under "Kiti dokumentai" and still open; everything works offline. | ✔ |
 | 10 | On the phone: attach a real ticket to a booking, move one, open it in airplane mode. | As above. | Phone |
+
+Phone test by the owner on 2026-11-16 (version 0.3.3): attachment count, tickets on bookings and the offline viewer work.

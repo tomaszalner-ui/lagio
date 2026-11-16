@@ -23,4 +23,11 @@ if (version) {
 }
 
 writeFileSync(file, source);
-console.log(`sw.js: ${appFiles().length} files${version ? ', version ' + version : ''}`);
+
+// The app shows / exports its version from js/version.js
+if (version) {
+  const versionFile = join(ROOT, 'js', 'version.js');
+  const text = readFileSync(versionFile, 'utf8').replace(/APP_VERSION = '[^']*'/, `APP_VERSION = '${version}'`);
+  writeFileSync(versionFile, text);
+}
+console.log(`sw.js: ${appFiles().length} files${version ? ', version ' + version + ' (also js/version.js)' : ''}`);
