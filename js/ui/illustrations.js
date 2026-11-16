@@ -38,3 +38,5 @@ export const CalendarIcon = () => html`<${Icon} d="M5 5h14a1 1 0 0 1 1 1v13a1 1 
 export const ChecklistIcon = () => html`<${Icon} d="M10 6h10M10 12h10M10 18h10M4 6l1.5 1.5L8 5M4 12l1.5 1.5L8 11M4 18l1.5 1.5L8 17" />`;
 export const WalletIcon = () => html`<${Icon} d="M4 7h15a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a2 2 0 0 1 2-2h11v3M16 13h.01" />`;
 export const NoteIcon = () => html`<${Icon} d="M6 3h9l4 4v14H6zM15 3v4h4M9 12h6M9 16h6" />`;
+export const FileIcon = () => html`<${Icon} d="M6 3h9l4 4v14H6zM15 3v4h4" />`;
+export const ImageIcon = () => html`<${Icon} d="M4 5h16v14H4zM4 16l5-5 4 4 2-2 5 5M15 9h.01" />`;

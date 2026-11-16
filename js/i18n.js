@@ -188,6 +188,21 @@ export function currencyName(code) {
   }
 }
 
+// When something was saved: '2026-11-16T09:51:00.000Z' -> "lapkričio 16 d."
+// (a real moment in time, shown in this phone's time zone)
+export function formatTimestamp(iso) {
+  return new Intl.DateTimeFormat(locale(), DATE_STYLES.short).format(new Date(iso));
+}
+
+// File sizes: 3 560 000 -> "3,4 MB", 48 000 -> "47 kB"
+export function formatFileSize(bytes) {
+  const megabytes = bytes / (1024 * 1024);
+  if (megabytes >= 1) {
+    return formatNumber(megabytes, { style: 'unit', unit: 'megabyte', maximumFractionDigits: 1 });
+  }
+  return formatNumber(Math.max(1, Math.round(bytes / 1024)), { style: 'unit', unit: 'kilobyte' });
+}
+
 // formatTime('2026-11-16T14:30') -> "14:30"
 export function formatTime(iso) {
   return new Intl.DateTimeFormat(locale(), { hour: '2-digit', minute: '2-digit' })

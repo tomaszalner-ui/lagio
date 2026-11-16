@@ -740,6 +740,173 @@ select {
   cursor: pointer;
 }
 
+/* Each tile fills its grid cell; tiles that open a screen look tappable */
+.tiles > li {
+  display: flex;
+}
+
+.tile {
+  flex: 1;
+}
+
+.tile.is-link {
+  color: var(--color-text);
+  text-decoration: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 1px 0 var(--color-primary-soft);
+}
+
+.tile.is-link:active {
+  background: var(--color-primary-soft);
+}
+
+/* Hidden but still usable (e.g. the file input behind "Add document") */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.button-danger-text {
+  color: var(--color-danger);
+}
+
+/* ---------- documents ---------- */
+.doc-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doc-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 60px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.doc-row:active {
+  background: var(--color-primary-soft);
+}
+
+.doc-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.doc-text {
+  display: grid;
+  min-width: 0;
+}
+
+.doc-name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.doc-meta {
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.doc-actions {
+  margin-top: 12px;
+}
+
+.storage-line {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+/* ---------- document viewer (full screen) ---------- */
+.viewer {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0;
+  border-radius: 0;
+}
+
+.viewer .modal-box {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0;
+}
+
+.viewer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: calc(8px + env(safe-area-inset-top)) var(--space) 8px;
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.viewer-title {
+  min-width: 0;
+  font-size: 17px;
+  overflow-wrap: anywhere;
+}
+
+.viewer-body {
+  display: grid;
+  place-items: center;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  background: #2b313a;
+}
+
+.viewer-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.viewer-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #fff;
+}
+
+.viewer-message {
+  max-width: 32ch;
+  padding: var(--space);
+  color: #fff;
+  text-align: center;
+}
+
+.viewer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px var(--space) calc(10px + env(safe-area-inset-bottom));
+  background: var(--color-surface);
+}
+
 /* ---------- wider screens ---------- */
 @media (min-width: 600px) {
   .main {

@@ -14,9 +14,10 @@ import { ActionSheet, ConfirmDialog } from './dialog.js';
 import { NotFound } from './not-found.js';
 import { archiveWithUndo, restoreFromArchive, duplicate, deleteWithUndo } from './trip-actions.js';
 
-// The parts of a trip, in the order shown. Each becomes a real screen later.
+// The parts of a trip, in the order shown. A tile with `path` opens its
+// screen; the others are marked "coming soon" until their milestone.
 const TILES = [
-  { key: 'dashboard.tiles.bookings', Icon: TicketIcon },
+  { key: 'dashboard.tiles.bookings', Icon: TicketIcon, path: paths.tripBookings },
   { key: 'dashboard.tiles.itinerary', Icon: CalendarIcon },
   { key: 'dashboard.tiles.packing', Icon: ChecklistIcon },
   { key: 'dashboard.tiles.spending', Icon: WalletIcon },
@@ -111,12 +112,22 @@ export function TripDashboard({ id }) {
       <${StageCard} trip=${trip} />
 
       <ul class="tiles">
-        ${TILES.map(({ key, Icon }) => html`
-          <li class="tile" key=${key} aria-disabled="true">
-            <${Icon} />
-            <span class="tile-name">${t(key)}</span>
-            <span class="badge badge-muted">${t('common.comingSoon')}</span>
-          </li>`)}
+        ${TILES.map(({ key, Icon, path }) => path
+          ? html`
+            <li key=${key}>
+              <a class="tile is-link" href=${path(trip.id)}>
+                <${Icon} />
+                <span class="tile-name">${t(key)}</span>
+              </a>
+            </li>`
+          : html`
+            <li key=${key}>
+              <div class="tile" aria-disabled="true">
+                <${Icon} />
+                <span class="tile-name">${t(key)}</span>
+                <span class="badge badge-muted">${t('common.comingSoon')}</span>
+              </div>
+            </li>`)}
       </ul>
 
       <${ActionSheet}

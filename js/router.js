@@ -13,6 +13,7 @@ const ROUTES = [
   { name: 'archive', pattern: /^\/archive\/?$/, keys: [] },
   { name: 'tripNew', pattern: /^\/trip\/new\/?$/, keys: [] },
   { name: 'tripEdit', pattern: /^\/trip\/([^/]+)\/edit\/?$/, keys: ['id'] },
+  { name: 'tripBookings', pattern: /^\/trip\/([^/]+)\/bookings\/?$/, keys: ['id'] },
   { name: 'trip', pattern: /^\/trip\/([^/]+)\/?$/, keys: ['id'] }
 ];
 
@@ -39,7 +40,8 @@ export const paths = {
   archive: () => '#/archive',
   tripNew: () => '#/trip/new',
   trip: (id) => '#/trip/' + encodeURIComponent(id),
-  tripEdit: (id) => '#/trip/' + encodeURIComponent(id) + '/edit'
+  tripEdit: (id) => '#/trip/' + encodeURIComponent(id) + '/edit',
+  tripBookings: (id) => '#/trip/' + encodeURIComponent(id) + '/bookings'
 };
 
 // Go to a screen from code, e.g. navigate(paths.trip(id)).

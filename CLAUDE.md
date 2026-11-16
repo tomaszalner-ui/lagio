@@ -52,10 +52,22 @@ When adding a file the app loads, also add it to `FILES` in `sw.js`.
 - Before every commit: works offline, no hard-coded text, Lithuanian checked, export then import loses nothing, 360 px layout, no console errors, data from the previous version still opens.
 - Commit messages: one line in English saying what the user gets.
 
+## Decisions
+Technical decisions made while building (the full list is in the plan doc and the `lagio-core` skill).
+
+| Topic | Decision |
+| --- | --- |
+| Trip stage | Calculated from the dates each time (`getTripStage`); no saved `status` field |
+| Preact version | Stay on 10.x (10.29.8) until 11 has settled; upgrade = swap two vendor files |
+| Persistent storage | Requested when the first trip is saved, not at startup (Firefox shows a popup) |
+| Shared origin with Mokis | Both apps live on tomaszalner-ui.github.io and share storage. Cache names start with `lagio-`, the service worker only deletes `lagio-` caches, and Lagio never clears storage site-wide. Own domain (lagio.lt) before testers |
+| Trip's own tripId | A trip's `tripId` is its own `id`, so one tripId lookup per store finds everything of a trip |
+| Duplicating a trip | Copies name, places, colour and currency; no dates |
+
 ## Build order (phase 1)
-1. Foundation  ← current
-2. Trips
-3. Bookings and documents
+1. Foundation ✓ (0.1.0, phone-tested 16 Nov 2026)
+2. Trips ✓ (0.2.1, phone-tested 16 Nov 2026)
+3. Bookings and documents  ← current
 4. Trip file export/import
 5. Packing checklist
 6. Itinerary

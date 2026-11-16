@@ -17,6 +17,7 @@ import { Home } from './home.js';
 import { Archive } from './archive.js';
 import { TripForm } from './trip-form.js';
 import { TripDashboard } from './trip-dashboard.js';
+import { TripBookings } from './trip-bookings.js';
 
 // Shown if the app cannot start, e.g. the browser blocks storage
 function StartupError() {
@@ -38,6 +39,7 @@ function Screen({ route }) {
     // key: a different trip gets a fresh form instead of reusing the old one
     case 'tripEdit': return html`<${TripForm} id=${route.params.id} key=${'edit-' + route.params.id} />`;
     case 'trip': return html`<${TripDashboard} id=${route.params.id} key=${'trip-' + route.params.id} />`;
+    case 'tripBookings': return html`<${TripBookings} id=${route.params.id} key=${'bookings-' + route.params.id} />`;
     default: return html`<${Home} />`;
   }
 }

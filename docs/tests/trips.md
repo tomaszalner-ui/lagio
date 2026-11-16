@@ -23,3 +23,5 @@ day after the end, across the March summer-time change; Lithuanian plurals
 month, across months, across years and in another year.
 
 Not applicable yet: export round trip (milestone 4).
+
+Phone test by the owner on 2026-11-16 (version 0.2.1): all cases passed.
