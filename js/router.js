@@ -13,6 +13,7 @@ const ROUTES = [
   { name: 'archive', pattern: /^\/archive\/?$/, keys: [] },
   { name: 'tripNew', pattern: /^\/trip\/new\/?$/, keys: [] },
   { name: 'tripEdit', pattern: /^\/trip\/([^/]+)\/edit\/?$/, keys: ['id'] },
+  { name: 'tripPacking', pattern: /^\/trip\/([^/]+)\/packing\/?$/, keys: ['id'] },
   { name: 'tripBookings', pattern: /^\/trip\/([^/]+)\/bookings\/?$/, keys: ['id'] },
   { name: 'bookingNew', pattern: /^\/trip\/([^/]+)\/bookings\/new\/?$/, keys: ['id'] },
   { name: 'bookingEdit', pattern: /^\/trip\/([^/]+)\/bookings\/([^/]+)\/edit\/?$/, keys: ['id', 'bookingId'] },
@@ -45,6 +46,7 @@ export const paths = {
   trip: (id) => '#/trip/' + encodeURIComponent(id),
   tripEdit: (id) => '#/trip/' + encodeURIComponent(id) + '/edit',
   tripBookings: (id) => '#/trip/' + encodeURIComponent(id) + '/bookings',
+  tripPacking: (id) => '#/trip/' + encodeURIComponent(id) + '/packing',
   bookingNew: (id) => paths.tripBookings(id) + '/new',
   booking: (id, bookingId) => paths.tripBookings(id) + '/' + encodeURIComponent(bookingId),
   bookingEdit: (id, bookingId) => paths.booking(id, bookingId) + '/edit'

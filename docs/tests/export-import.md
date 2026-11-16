@@ -54,3 +54,5 @@ Phone test by the owner on 2026-11-16 (version 0.4.1): export, import (file pick
 | 9 | Import a trip file. | No strip for the imported trip (the file is its backup). | ✔ |
 | 10 | EN; airplane mode. | "No backup yet." / "Changed since the backup (16 November)."; strip and export work offline. | ✔ |
 | 11 | Phone: is it noticeable but not annoying? | Owner's judgement. | Phone |
+
+Phone test by the owner on 2026-11-16 (version 0.4.2): the backup reminder works and is not annoying.

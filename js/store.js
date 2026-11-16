@@ -8,6 +8,7 @@ import { useState, useEffect } from 'preact/hooks';
 import { listTrips } from './modules/trips.js';
 import { listDocuments } from './modules/documents.js';
 import { listBookings } from './modules/bookings.js';
+import { listItems } from './modules/checklist.js';
 
 const state = {
   ready: false,        // true once the database and texts are loaded
@@ -17,6 +18,7 @@ const state = {
   trips: [],           // all trips that are not deleted (archived included)
   documents: { tripId: null, items: [] }, // the open trip's documents
   bookings: { tripId: null, items: [] },  // the open trip's bookings, in time order
+  checklist: { tripId: null, items: [] }, // the open trip's packing list
   toast: null,         // short message at the bottom, see ui/toast.js
   updateReady: false   // a new app version is waiting (see pwa.js)
 };
@@ -69,4 +71,9 @@ export async function reloadDocuments(tripId) {
 // Reads one trip's bookings (only the open trip's are kept in the state).
 export async function reloadBookings(tripId) {
   setState({ bookings: { tripId, items: await listBookings(tripId) } });
+}
+
+// Reads one trip's packing list (only the open trip's is kept in the state).
+export async function reloadChecklist(tripId) {
+  setState({ checklist: { tripId, items: await listItems(tripId) } });
 }

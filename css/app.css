@@ -1305,3 +1305,195 @@ textarea {
   color: inherit;
   cursor: pointer;
 }
+
+/* ---------- packing list (trip-packing.js) ---------- */
+.pack-progress {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.progress {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--color-border);
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--color-success);
+  transition: width 0.2s;
+}
+
+.pack-progress-text {
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+.pack-add {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.pack-add-row {
+  display: flex;
+  gap: 8px;
+}
+
+.pack-add-row .input {
+  flex: 1;
+}
+
+.pack-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+/* A small on/off button ("Hide packed") */
+.chip-toggle {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.chip-toggle[aria-pressed="true"] {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary-dark);
+}
+
+.pack-group-count {
+  margin-left: 6px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.pack-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.pack-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-left: 12px;
+}
+
+.pack-item + .pack-item {
+  border-top: 1px solid var(--color-border);
+}
+
+.pack-check {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  accent-color: var(--color-success);
+  cursor: pointer;
+}
+
+/* The whole row is tappable (the label belongs to the checkbox) */
+.pack-label {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 8px;
+  min-width: 0;
+  min-height: 48px;
+  padding: 8px 4px 8px 10px;
+  cursor: pointer;
+}
+
+.pack-text {
+  overflow-wrap: anywhere;
+}
+
+.pack-quantity {
+  flex: none;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-dark);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.pack-item.is-done .pack-text {
+  color: var(--color-muted);
+  text-decoration: line-through;
+}
+
+.pack-edit {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: var(--tap);
+  height: var(--tap);
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-muted);
+  cursor: pointer;
+}
+
+.pack-all-hidden {
+  margin-top: 16px;
+  text-align: center;
+  font-weight: 700;
+  color: var(--color-success);
+}
+
+/* − ×3 + */
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  border: 1px solid #c4cad3;
+  border-radius: 10px;
+  background: var(--color-surface);
+}
+
+.stepper-button {
+  display: grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  border: 0;
+  background: transparent;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.stepper-button:disabled {
+  color: var(--color-border);
+  cursor: default;
+}
+
+.stepper-value {
+  font-weight: 700;
+}
+
+.modal-form {
+  margin-top: 12px;
+}

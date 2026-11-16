@@ -2,6 +2,7 @@
 
 One line per version: date, version, what changed in plain words.
 
+- 2026-11-16 · 0.5.0 · Packing list: add items by category, tick them off, quantity ×N, hide packed, start over (with Undo); progress on the trip screen. Travels in the trip file.
 - 2026-11-16 · 0.4.2 · Backup reminder: a slim strip on the trip screen when bookings or tickets changed since the last export; Eksportuoti or ✕ (hidden until the next change). Not shown for finished or archived trips.
 - 2026-11-16 · 0.4.1 · Import a trip file: Importuoti kelionę on Home checks the file, shows a summary and adds the trip (or a copy, or replaces the one on the phone); all or nothing. App updates no longer download PDF.js again.
 - 2026-11-16 · 0.4.0 · Export a trip: ⋯ → Eksportuoti kelionę makes one .lagio file with the trip, its bookings and all tickets, to share or keep as a backup. Works offline.

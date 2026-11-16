@@ -5,11 +5,12 @@
 
 import { useEffect, useState } from 'preact/hooks';
 import { html } from './html.js';
-import { useStore } from '../store.js';
+import { useStore, reloadChecklist } from '../store.js';
 import { t, formatDateRange, formatTimestamp } from '../i18n.js';
 import { backupStatus, dismissBackupReminder } from '../transfer.js';
 import { navigate, paths } from '../router.js';
 import { getTripStage } from '../modules/trips.js';
+import { progress } from '../modules/checklist.js';
 import {
   ChevronLeft, MoreIcon, TicketIcon, CalendarIcon, ChecklistIcon, WalletIcon, NoteIcon, ShieldIcon, CloseIcon
 } from './illustrations.js';
@@ -23,7 +24,7 @@ import { ExportDialog } from './export-dialog.js';
 const TILES = [
   { key: 'dashboard.tiles.bookings', Icon: TicketIcon, path: paths.tripBookings },
   { key: 'dashboard.tiles.itinerary', Icon: CalendarIcon },
-  { key: 'dashboard.tiles.packing', Icon: ChecklistIcon },
+  { key: 'dashboard.tiles.packing', Icon: ChecklistIcon, path: paths.tripPacking, packing: true },
   { key: 'dashboard.tiles.spending', Icon: WalletIcon },
   { key: 'dashboard.tiles.notes', Icon: NoteIcon }
 ];
@@ -90,6 +91,7 @@ function BackupReminder({ lastExport, onExport, onDismiss }) {
 
 export function TripDashboard({ id }) {
   const trips = useStore((s) => s.trips);
+  const checklist = useStore((s) => s.checklist);
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -101,10 +103,17 @@ export function TripDashboard({ id }) {
     backupStatus(id).then(setBackup).catch((error) => console.error(error));
   }, [id, exporting]);
 
+  // The packing list's progress for its tile
+  useEffect(() => {
+    reloadChecklist(id).catch((error) => console.error(error));
+  }, [id]);
+
   const trip = trips.find((item) => item.id === id);
   if (!trip) return html`<${NotFound} />`;
 
   const places = trip.destinations.map((place) => place.name).join(', ');
+  const packingItems = checklist.tripId === trip.id ? checklist.items : [];
+  const { done: packingDone, total: packingTotal } = progress(packingItems);
   const dates = formatDateRange(trip.startDate, trip.endDate);
 
   const actions = [
@@ -153,12 +162,16 @@ export function TripDashboard({ id }) {
         />`}
 
       <ul class="tiles">
-        ${TILES.map(({ key, Icon, path }) => path
+        ${TILES.map(({ key, Icon, path, packing }) => path
           ? html`
             <li key=${key}>
               <a class="tile is-link" href=${path(trip.id)}>
                 <${Icon} />
                 <span class="tile-name">${t(key)}</span>
+                ${packing && packingTotal > 0 && html`
+                  <span class=${'badge ' + (packingDone === packingTotal ? 'badge-active' : 'badge-soon')}>
+                    ${t('packing.tileProgress', { done: String(packingDone), total: String(packingTotal) })}
+                  </span>`}
               </a>
             </li>`
           : html`

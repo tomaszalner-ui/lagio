@@ -73,14 +73,15 @@ Technical decisions made while building (the full list is in the plan doc and th
 | Import | File checked fully before saving: only `trip.json` and `files/<uuid>` entries; limits 400 MB per file, 100 MB per attached file, 10 MB for trip.json (read in pieces, so zip bombs stop early). Same trip on the phone: copy (new ids, links remapped, "(kopija)") or replace; otherwise saved with its ids. One transaction (`importBundle`) |
 | Offline caches | `lagio-v<version>` for app files; `lagio-pdfjs-<PDF.js version>` for PDF.js, filled only with missing files and kept between releases |
 | Backup reminder | Slim strip on the dashboard when the trip has bookings/documents and changed (any record updatedAt) since the last export and since ✕; before and during the trip, never after or when archived. Import counts as a backup |
+| Packing list | One list per trip (`listName` "packing"), 6 fixed categories (keys), optional `quantity` ×2–99, `ownerId` null = shared. Steps: 5a list, 5b templates (built-in texts in lang files; own templates in settings), 5c travelers on the trip + per-person lists |
 | Booking types | flight, train, bus, ferry, car, stay, event, other; start/end labels follow the type. Address opens a Google Maps search link (tapped by the user, not fetched) |
 
 ## Build order (phase 1)
 1. Foundation ✓ (0.1.0, phone-tested 16 Nov 2026)
 2. Trips ✓ (0.2.1, phone-tested 16 Nov 2026)
 3. Bookings and documents ✓ (0.3.3, phone-tested 16 Nov 2026)
-4. Trip file export/import  ← current
-5. Packing checklist
+4. Trip file export/import ✓ (0.4.2, phone-tested 16 Nov 2026)
+5. Packing checklist  ← current
 6. Itinerary
 7. Spending
 8. Password lock, notes, polish
