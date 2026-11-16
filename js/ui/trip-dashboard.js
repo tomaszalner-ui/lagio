@@ -3,13 +3,16 @@
 // Then a stage card that changes with the trip's stage (calculated from the
 // dates), and tiles for the parts of the trip that later milestones fill in.
 
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import { html } from './html.js';
 import { useStore } from '../store.js';
-import { t, formatDateRange } from '../i18n.js';
+import { t, formatDateRange, formatTimestamp } from '../i18n.js';
+import { backupStatus, dismissBackupReminder } from '../transfer.js';
 import { navigate, paths } from '../router.js';
 import { getTripStage } from '../modules/trips.js';
-import { ChevronLeft, MoreIcon, TicketIcon, CalendarIcon, ChecklistIcon, WalletIcon, NoteIcon } from './illustrations.js';
+import {
+  ChevronLeft, MoreIcon, TicketIcon, CalendarIcon, ChecklistIcon, WalletIcon, NoteIcon, ShieldIcon, CloseIcon
+} from './illustrations.js';
 import { ActionSheet, ConfirmDialog } from './dialog.js';
 import { NotFound } from './not-found.js';
 import { archiveWithUndo, restoreFromArchive, duplicate, deleteWithUndo } from './trip-actions.js';
@@ -67,11 +70,36 @@ function StageCard({ trip }) {
     </div>`;
 }
 
+// A slim one-line reminder to export the trip. Shown only when something
+// changed since the last backup; ✕ hides it until the next change.
+function BackupReminder({ lastExport, onExport, onDismiss }) {
+  return html`
+    <div class="backup-strip" role="status">
+      <${ShieldIcon} />
+      <p class="backup-text">
+        ${lastExport
+          ? t('backup.changed', { date: formatTimestamp(lastExport) })
+          : t('backup.never')}
+      </p>
+      <button type="button" class="button button-small" onClick=${onExport}>${t('backup.export')}</button>
+      <button type="button" class="backup-close" aria-label=${t('backup.later')} title=${t('backup.later')} onClick=${onDismiss}>
+        <${CloseIcon} />
+      </button>
+    </div>`;
+}
+
 export function TripDashboard({ id }) {
   const trips = useStore((s) => s.trips);
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [backup, setBackup] = useState(null); // see transfer.backupStatus()
+
+  // Check whether a backup reminder is due (again after each export)
+  useEffect(() => {
+    if (exporting) return;
+    backupStatus(id).then(setBackup).catch((error) => console.error(error));
+  }, [id, exporting]);
 
   const trip = trips.find((item) => item.id === id);
   if (!trip) return html`<${NotFound} />`;
@@ -113,6 +141,16 @@ export function TripDashboard({ id }) {
       ${trip.archived && html`<p class="notice">${t('dashboard.archivedNote')}</p>`}
 
       <${StageCard} trip=${trip} />
+
+      ${backup && backup.needed && !trip.archived && getTripStage(trip).stage !== 'done' && html`
+        <${BackupReminder}
+          lastExport=${backup.lastExport}
+          onExport=${() => setExporting(true)}
+          onDismiss=${() => {
+            setBackup(null);
+            dismissBackupReminder(trip.id).catch((error) => console.error(error));
+          }}
+        />`}
 
       <ul class="tiles">
         ${TILES.map(({ key, Icon, path }) => path

@@ -72,6 +72,7 @@ Technical decisions made while building (the full list is in the plan doc and th
 | Export flow | Two taps: prepare the file, then Bendrinti (if the phone can share it; iPhone yes, Android Chrome no) or Atsisiųsti. The app version lives in `js/version.js`, written by `update-sw.mjs` |
 | Import | File checked fully before saving: only `trip.json` and `files/<uuid>` entries; limits 400 MB per file, 100 MB per attached file, 10 MB for trip.json (read in pieces, so zip bombs stop early). Same trip on the phone: copy (new ids, links remapped, "(kopija)") or replace; otherwise saved with its ids. One transaction (`importBundle`) |
 | Offline caches | `lagio-v<version>` for app files; `lagio-pdfjs-<PDF.js version>` for PDF.js, filled only with missing files and kept between releases |
+| Backup reminder | Slim strip on the dashboard when the trip has bookings/documents and changed (any record updatedAt) since the last export and since ✕; before and during the trip, never after or when archived. Import counts as a backup |
 | Booking types | flight, train, bus, ferry, car, stay, event, other; start/end labels follow the type. Address opens a Google Maps search link (tapped by the user, not fetched) |
 
 ## Build order (phase 1)

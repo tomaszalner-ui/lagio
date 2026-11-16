@@ -34,3 +34,23 @@
 | 10 | Update from 0.4.0 to 0.4.1. | PDF.js is downloaded once more into `lagio-pdfjs-6.5.438` (184 files); the app's files go into `lagio-v0.4.1` (53); the old cache is deleted. | ✔ |
 | 11 | A later release (simulated 0.4.2). | **No** PDF.js file is requested again (54 requests, 0 for PDF.js); `lagio-pdfjs-6.5.438` is kept; PDFs still open offline. | ✔ |
 | 12 | Phone: import the file exported in 4a (from Downloads, Files, Messenger…). | As in 2–3. | Phone |
+
+Phone test by the owner on 2026-11-16 (version 0.4.1): export, import (file picker, copy, replace) and offline tickets work.
+
+## Step 4c: backup reminder (version 0.4.2)
+
+✔ = passed in headless Edge on 2026-11-16. "Phone" = to check on the owner's phone.
+
+| # | Steps | Expected | Result |
+| --- | --- | --- | --- |
+| 1 | A trip with no bookings or documents. | No reminder. | ✔ |
+| 2 | Add the first booking, open the trip. | A slim strip (52 px) under the stage card: shield, "Atsarginės kopijos dar nėra.", **Eksportuoti**, ✕. No sideways scrolling. | ✔ |
+| 3 | Tap ✕, reopen the trip. | Gone, and stays gone. | ✔ |
+| 4 | Change something in the trip (e.g. rename a booking), reopen. | The strip is back. | ✔ |
+| 5 | **Eksportuoti** → Atsisiųsti. | The export box opens; after the download the strip is gone. | ✔ |
+| 6 | Change something after the export. | "Pakeista po kopijos (lapkričio 16 d.)." | ✔ |
+| 7 | A trip happening now, with a booking. | The strip shows (until exported or ✕). | ✔ |
+| 8 | A finished trip; an archived trip. | No strip. | ✔ |
+| 9 | Import a trip file. | No strip for the imported trip (the file is its backup). | ✔ |
+| 10 | EN; airplane mode. | "No backup yet." / "Changed since the backup (16 November)."; strip and export work offline. | ✔ |
+| 11 | Phone: is it noticeable but not annoying? | Owner's judgement. | Phone |

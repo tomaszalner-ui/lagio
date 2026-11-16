@@ -32,6 +32,7 @@ function Icon({ d, weight = 2 }) {
 export const ChevronLeft = () => html`<${Icon} d="M15 5l-7 7 7 7" />`;
 export const PlusIcon = () => html`<${Icon} d="M12 5v14M5 12h14" />`;
 export const MinusIcon = () => html`<${Icon} d="M5 12h14" />`;
+export const ShieldIcon = () => html`<${Icon} d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6zM9 12l2 2 4-4" />`;
 export const ImportIcon = () => html`<${Icon} d="M12 3v12M7 10l5 5 5-5M5 21h14" />`;
 export const CloseIcon = () => html`<${Icon} d="M6 6l12 12M18 6L6 18" />`;
 export const MoreIcon = () => html`<${Icon} d="M5 12h.01M12 12h.01M19 12h.01" weight="4" />`;

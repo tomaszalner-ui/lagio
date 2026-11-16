@@ -329,6 +329,8 @@ export async function importTrip(bundle, mode, { copyName } = {}) {
 
   await importBundle({ put, softDeletes });
   requestPersistentStorage();
+  // The file it came from is a backup, so no reminder for this trip yet
+  await markExported(tripId);
   return tripId;
 }
 
@@ -342,4 +344,35 @@ export function markExported(tripId) {
 // When the trip was last exported, or null
 export function lastExportedAt(tripId) {
   return getSetting('lastExport:' + tripId, null);
+}
+
+// "Later" on the reminder: hide it until the trip changes again
+export function dismissBackupReminder(tripId) {
+  return setSetting('backupDismissed:' + tripId, new Date().toISOString());
+}
+
+// Should the trip's dashboard remind the user to make a backup?
+// Yes when the trip has bookings or documents (something worth keeping) and
+// something changed since the last export (or it was never exported) and
+// since the user last tapped "Later". "Changed" = any record of the trip
+// added, edited or deleted after that moment (from the records' updatedAt).
+export async function backupStatus(tripId) {
+  let lastChange = '';
+  let hasContent = false;
+  for (const store of [...EXPORTED_STORES, 'files']) {
+    const records = await list(store, { tripId, includeDeleted: true });
+    for (const record of records) {
+      if (record.updatedAt > lastChange) lastChange = record.updatedAt;
+    }
+    if ((store === 'bookings' || store === 'documents') && records.some((r) => !r.deletedAt)) hasContent = true;
+  }
+  const trip = await get('trips', tripId, { includeDeleted: true });
+  if (trip && trip.updatedAt > lastChange) lastChange = trip.updatedAt;
+
+  const lastExport = await lastExportedAt(tripId);
+  const dismissed = await getSetting('backupDismissed:' + tripId, null);
+  const needed = hasContent &&
+    (!lastExport || lastChange > lastExport) &&
+    (!dismissed || lastChange > dismissed);
+  return { needed, lastExport, lastChange };
 }

@@ -125,6 +125,11 @@
     "other": "{count} bookings"
   },
 
+  "backup.never": "No backup yet.",
+  "backup.changed": "Changed since the backup ({date}).",
+  "backup.export": "Export",
+  "backup.later": "Remind me later",
+
   "delete.title": "Delete this trip?",
   "delete.text": "“{name}” and everything in it will be deleted. You can still undo this right after.",
   "delete.confirm": "Delete",

@@ -131,6 +131,11 @@
     "other": "{count} rezervacijų"
   },
 
+  "backup.never": "Atsarginės kopijos dar nėra.",
+  "backup.changed": "Pakeista po kopijos ({date}).",
+  "backup.export": "Eksportuoti",
+  "backup.later": "Priminti vėliau",
+
   "delete.title": "Ištrinti kelionę?",
   "delete.text": "Kelionė „{name}“ ir visa jos informacija bus ištrinta. Iškart po to dar galėsite tai atšaukti.",
   "delete.confirm": "Ištrinti",
