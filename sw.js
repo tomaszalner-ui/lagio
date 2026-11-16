@@ -8,7 +8,7 @@
 // When you add a file to the app, add it to FILES too
 // (`node tools/check.mjs` warns if you forget).
 
-const VERSION = '0.1.0';
+const VERSION = '0.2.0';
 const CACHE = 'lagio-v' + VERSION;
 
 const FILES = [
@@ -23,13 +23,23 @@ const FILES = [
   'js/router.js',
   'js/store.js',
   'js/modules/trips.js',
+  'js/ui/archive.js',
+  'js/ui/color-picker.js',
+  'js/ui/dialog.js',
   'js/ui/empty-state.js',
+  'js/ui/field.js',
   'js/ui/home.js',
   'js/ui/html.js',
   'js/ui/illustrations.js',
   'js/ui/lang-switch.js',
+  'js/ui/not-found.js',
+  'js/ui/places-input.js',
   'js/ui/shell.js',
-  'js/ui/trip.js',
+  'js/ui/toast.js',
+  'js/ui/trip-actions.js',
+  'js/ui/trip-card.js',
+  'js/ui/trip-dashboard.js',
+  'js/ui/trip-form.js',
   'js/ui/update-banner.js',
   'lang/en.json',
   'lang/lt.json',

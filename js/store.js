@@ -5,13 +5,15 @@
 // every subscriber is told (that is the "emit"), and screens redraw.
 
 import { useState, useEffect } from 'preact/hooks';
+import { listTrips } from './modules/trips.js';
 
 const state = {
   ready: false,        // true once the database and texts are loaded
   startupError: false, // true if the app could not start (e.g. no storage)
   lang: 'lt',          // current language
   route: { name: 'home', params: {} }, // current screen, set by router.js
-  trips: [],           // trips shown on the home screen
+  trips: [],           // all trips that are not deleted (archived included)
+  toast: null,         // short message at the bottom, see ui/toast.js
   updateReady: false   // a new app version is waiting (see pwa.js)
 };
 
@@ -44,4 +46,12 @@ export function useStore(pick) {
     return subscribe((current) => setValue(pick(current)));
   }, []);
   return value;
+}
+
+// ---------- loading data into the state ----------
+
+// Reads the trips from the database again. Call after any trip change,
+// and every screen showing trips redraws.
+export async function reloadTrips() {
+  setState({ trips: await listTrips() });
 }

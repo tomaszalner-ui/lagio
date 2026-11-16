@@ -77,10 +77,64 @@ for (const key of allKeys) {
 }
 
 // ---------- 3. visible text written in code ----------
+
+// The fixed text of every html`…` template, with each ${…} part replaced by
+// a space. Counts braces and quotes, so ${…} parts that contain { } or
+// other templates are skipped whole.
+function htmlTemplates(source) {
+  const out = [];
+  let at = 0;
+  while ((at = source.indexOf('html`', at)) !== -1) {
+    let i = at + 5;
+    let text = '';
+    while (i < source.length && source[i] !== '`') {
+      if (source[i] === '\\') { text += source[i + 1]; i += 2; continue; }
+      if (source[i] === '$' && source[i + 1] === '{') {
+        i = skipExpression(source, i + 2);
+        text += ' ';
+        continue;
+      }
+      text += source[i++];
+    }
+    out.push(text);
+    at = i + 1;
+  }
+  return out;
+}
+
+// Returns the position just after the } that closes an expression
+function skipExpression(source, i) {
+  let depth = 1;
+  while (i < source.length && depth > 0) {
+    const c = source[i];
+    if (c === '{') depth++;
+    else if (c === '}') depth--;
+    else if (c === '\'' || c === '"') i = skipString(source, i, c);
+    else if (c === '`') i = skipTemplate(source, i);
+    i++;
+  }
+  return i;
+}
+
+function skipString(source, i, quote) {
+  i++;
+  while (i < source.length && source[i] !== quote) i += source[i] === '\\' ? 2 : 1;
+  return i;
+}
+
+// Skips a nested `…` template (its own ${…} parts included); returns its closing `
+function skipTemplate(source, i) {
+  i++;
+  while (i < source.length && source[i] !== '`') {
+    if (source[i] === '\\') { i += 2; continue; }
+    if (source[i] === '$' && source[i + 1] === '{') { i = skipExpression(source, i + 2); continue; }
+    i++;
+  }
+  return i;
+}
 for (const file of jsFiles.filter((f) => f.startsWith('js/ui/'))) {
   const source = read(file);
-  for (const template of source.matchAll(/html`([\s\S]*?)`/g)) {
-    const markup = template[1].replace(/\$\{[^}]*\}/g, ' ');
+  for (const markup of htmlTemplates(source)) {
     for (const text of markup.matchAll(/>([^<>]+)</g)) {
       if (/[A-Za-zĄČĘĖĮŠŲŪŽąčęėįšųūž]{2,}/.test(text[1])) problems.push(`${file}: text written in code: "${text[1].trim()}"`);
     }

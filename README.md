@@ -5,7 +5,7 @@ that runs in the phone's browser and can be installed like an app (PWA).
 Everything for a trip in one place: itinerary, bookings, ticket PDFs, packing list,
 spending and notes. All data stays on the device and works offline.
 
-Status: milestone 1 (Foundation): app shell, language switch, storage, offline support.
+Status: milestone 2 (Trips): create and manage trips, trip dashboard frame.
 
 ## Run it on your computer
 

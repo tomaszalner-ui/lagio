@@ -3,12 +3,11 @@
 
 import { render } from 'preact';
 import { html } from './ui/html.js';
-import { setState } from './store.js';
+import { setState, reloadTrips } from './store.js';
 import { openDb } from './db.js';
 import { initI18n } from './i18n.js';
 import { startRouter } from './router.js';
 import { registerServiceWorker } from './pwa.js';
-import { listTrips } from './modules/trips.js';
 import { Shell } from './ui/shell.js';
 
 async function start() {
@@ -17,7 +16,7 @@ async function start() {
   try {
     await openDb();
     await initI18n();
-    setState({ trips: await listTrips() });
+    await reloadTrips();
     startRouter();
     setState({ ready: true });
   } catch (error) {

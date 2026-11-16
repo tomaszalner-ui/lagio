@@ -2,7 +2,7 @@
 //
 // Every visible word comes from lang/lt.json or lang/en.json:
 //   t('home.title')                  -> "Mano kelionės"
-//   t('trips.count', { count: 5 })   -> "5 kelionės" (plural form chosen for you)
+//   t('dashboard.days', { count: 5 }) -> "5 dienos" (plural form chosen for you)
 // Dates, numbers and money also go through the functions here, so they look
 // right in each language. Lithuanian is the default.
 
@@ -143,6 +143,49 @@ const DATE_STYLES = {
 export function formatDate(iso, style = 'medium') {
   return new Intl.DateTimeFormat(locale(), DATE_STYLES[style] || DATE_STYLES.medium)
     .format(parseLocalDate(iso));
+}
+
+// The month as it is written next to a day: "gruodžio" / "December"
+function monthWithDay(date) {
+  return new Intl.DateTimeFormat(locale(), { month: 'long', day: 'numeric' })
+    .formatToParts(date)
+    .find((part) => part.type === 'month').value;
+}
+
+// A trip's dates: "gruodžio 20–27 d." / "20–27 December".
+// The year is shown only when the dates are not in the current year.
+// Only a start date: just that date. No dates: ''.
+// The patterns live in the language files (date.range.*), because the
+// browser's own range format drops the Lithuanian "d." and "m.".
+export function formatDateRange(startIso, endIso) {
+  if (!startIso) return '';
+  const thisYear = String(new Date().getFullYear());
+  const start = parseLocalDate(startIso);
+  if (!endIso || endIso === startIso) {
+    return formatDate(startIso, String(start.getFullYear()) === thisYear ? 'short' : 'medium');
+  }
+  const end = parseLocalDate(endIso);
+  // Strings, not numbers, so the year is not written as "2 026"
+  const params = {
+    day1: String(start.getDate()), month1: monthWithDay(start), year1: String(start.getFullYear()),
+    day2: String(end.getDate()), month2: monthWithDay(end), year2: String(end.getFullYear())
+  };
+  if (params.year1 !== params.year2) return t('date.range.differentYears', params);
+  const withYear = params.year1 !== thisYear;
+  if (start.getMonth() === end.getMonth()) {
+    return t(withYear ? 'date.range.sameMonthWithYear' : 'date.range.sameMonth', params);
+  }
+  return t(withYear ? 'date.range.sameYearWithYear' : 'date.range.sameYear', params);
+}
+
+// 'EUR' -> "euras" / "Euro". The names come from the browser (Intl), so they
+// need no translation keys. Falls back to the code.
+export function currencyName(code) {
+  try {
+    return new Intl.DisplayNames([locale()], { type: 'currency' }).of(code) || code;
+  } catch (error) {
+    return code;
+  }
 }
 
 // formatTime('2026-11-16T14:30') -> "14:30"

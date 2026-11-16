@@ -1,0 +1,141 @@
+// trip-dashboard.js — one trip's main screen (#/trip/:id).
+// Top: coloured header with name, places and dates, and a ⋯ menu.
+// Then a stage card that changes with the trip's stage (calculated from the
+// dates), and tiles for the parts of the trip that later milestones fill in.
+
+import { useState } from 'preact/hooks';
+import { html } from './html.js';
+import { useStore } from '../store.js';
+import { t, formatDateRange } from '../i18n.js';
+import { navigate, paths } from '../router.js';
+import { getTripStage } from '../modules/trips.js';
+import { ChevronLeft, MoreIcon, TicketIcon, CalendarIcon, ChecklistIcon, WalletIcon, NoteIcon } from './illustrations.js';
+import { ActionSheet, ConfirmDialog } from './dialog.js';
+import { NotFound } from './not-found.js';
+import { archiveWithUndo, restoreFromArchive, duplicate, deleteWithUndo } from './trip-actions.js';
+
+// The parts of a trip, in the order shown. Each becomes a real screen later.
+const TILES = [
+  { key: 'dashboard.tiles.bookings', Icon: TicketIcon },
+  { key: 'dashboard.tiles.itinerary', Icon: CalendarIcon },
+  { key: 'dashboard.tiles.packing', Icon: ChecklistIcon },
+  { key: 'dashboard.tiles.spending', Icon: WalletIcon },
+  { key: 'dashboard.tiles.notes', Icon: NoteIcon }
+];
+
+// The card under the header: what matters at this stage of the trip
+function StageCard({ trip }) {
+  const info = getTripStage(trip);
+
+  if (info.stage === 'planning') {
+    if (info.daysUntil === 1) {
+      return html`<div class="stage-card"><p class="stage-big">${t('dashboard.startsTomorrow')}</p></div>`;
+    }
+    return html`
+      <div class="stage-card">
+        <p class="stage-label">${t('dashboard.countdownLabel')}</p>
+        <p class="stage-big">${t('dashboard.days', { count: info.daysUntil })}</p>
+      </div>`;
+  }
+
+  if (info.stage === 'active') {
+    return html`
+      <div class="stage-card is-active">
+        <p class="stage-label">${t('dashboard.activeLabel')}</p>
+        <p class="stage-big">
+          ${info.totalDays
+            ? t('dashboard.dayOf', { day: info.day, total: info.totalDays })
+            : t('dashboard.dayN', { day: info.day })}
+        </p>
+      </div>`;
+  }
+
+  if (info.stage === 'done') {
+    return html`
+      <div class="stage-card">
+        <p class="stage-big">${t('dashboard.doneLabel')}</p>
+        <p class="stage-text">${t('dashboard.doneText')}</p>
+      </div>`;
+  }
+
+  return html`
+    <div class="stage-card">
+      <p class="stage-big">${t('dashboard.undatedLabel')}</p>
+      <a class="button button-small" href=${paths.tripEdit(trip.id)}>${t('dashboard.addDates')}</a>
+    </div>`;
+}
+
+export function TripDashboard({ id }) {
+  const trips = useStore((s) => s.trips);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+
+  const trip = trips.find((item) => item.id === id);
+  if (!trip) return html`<${NotFound} />`;
+
+  const places = trip.destinations.map((place) => place.name).join(', ');
+  const dates = formatDateRange(trip.startDate, trip.endDate);
+
+  const actions = [
+    { label: t('dashboard.edit'), onClick: () => navigate(paths.tripEdit(trip.id)) },
+    { label: t('dashboard.duplicate'), onClick: () => duplicate(trip) },
+    trip.archived
+      ? { label: t('dashboard.unarchive'), onClick: () => restoreFromArchive(trip) }
+      : { label: t('dashboard.archive'), onClick: () => archiveWithUndo(trip) },
+    { label: t('dashboard.delete'), danger: true, onClick: () => setConfirmingDelete(true) }
+  ];
+
+  return html`
+    <section class="screen">
+      <a class="back-link" href=${paths.home()}>
+        <${ChevronLeft} /><span>${t('home.title')}</span>
+      </a>
+
+      <header class=${'trip-header cover-' + trip.coverColor}>
+        <div class="trip-header-text">
+          <h1 class="trip-header-name">${trip.name}</h1>
+          ${places && html`<p class="trip-header-places">${places}</p>`}
+          ${dates && html`<p class="trip-header-dates">${dates}</p>`}
+        </div>
+        <button
+          type="button"
+          class="icon-button"
+          aria-label=${t('dashboard.menu')}
+          aria-haspopup="dialog"
+          onClick=${() => setMenuOpen(true)}
+        ><${MoreIcon} /></button>
+      </header>
+
+      ${trip.archived && html`<p class="notice">${t('dashboard.archivedNote')}</p>`}
+
+      <${StageCard} trip=${trip} />
+
+      <ul class="tiles">
+        ${TILES.map(({ key, Icon }) => html`
+          <li class="tile" key=${key} aria-disabled="true">
+            <${Icon} />
+            <span class="tile-name">${t(key)}</span>
+            <span class="badge badge-muted">${t('common.comingSoon')}</span>
+          </li>`)}
+      </ul>
+
+      <${ActionSheet}
+        open=${menuOpen}
+        title=${trip.name}
+        actions=${actions}
+        onClose=${() => setMenuOpen(false)}
+      />
+      <${ConfirmDialog}
+        open=${confirmingDelete}
+        title=${t('delete.title')}
+        text=${t('delete.text', { name: trip.name })}
+        confirmLabel=${t('delete.confirm')}
+        danger=${true}
+        onCancel=${() => setConfirmingDelete(false)}
+        onConfirm=${() => {
+          setConfirmingDelete(false);
+          deleteWithUndo(trip);
+        }}
+      />
+    </section>`;
+}

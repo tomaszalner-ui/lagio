@@ -8,6 +8,9 @@
   --color-primary-soft: #e3eef6;
   --color-accent: #f2a93b;        /* suitcase amber */
   --color-accent-dark: #d48a1c;
+  --color-danger: #b42318;
+  --color-success: #1f7a3d;
+  --color-success-soft: #e3f3e8;
   --color-bg: #f6f7f9;
   --color-surface: #ffffff;
   --color-text: #1c2430;
@@ -21,6 +24,16 @@
 
   color-scheme: light;
 }
+
+/* Trip cover colours. All dark enough for white text on top. */
+.cover-sea    { --cover: #0e5a8a; }
+.cover-lagoon { --cover: #0f766e; }
+.cover-forest { --cover: #2f6b3a; }
+.cover-amber  { --cover: #b45309; }
+.cover-sunset { --cover: #c2410c; }
+.cover-berry  { --cover: #be185d; }
+.cover-plum   { --cover: #6d28d9; }
+.cover-slate  { --cover: #475569; }
 
 /* ---------- base ---------- */
 *,
@@ -54,7 +67,9 @@ a {
   color: var(--color-primary);
 }
 
-button {
+button,
+input,
+select {
   font: inherit;
 }
 
@@ -128,12 +143,12 @@ button {
   max-width: 640px;
   margin: 0 auto;
   padding: var(--space);
-  padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  padding-bottom: calc(120px + env(safe-area-inset-bottom));
 }
 
 .screen-head {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 8px;
   margin-bottom: var(--space);
@@ -144,15 +159,44 @@ button {
   line-height: 1.25;
 }
 
+.section-title {
+  margin: 20px 0 8px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
 .back-link {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   min-height: var(--tap);
-  margin-left: -6px;
+  margin: -8px 0 4px -6px;
   padding-right: 8px;
   font-weight: 600;
   text-decoration: none;
+}
+
+.archive-link {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.archive-link a {
+  display: inline-block;
+  min-height: var(--tap);
+  padding: 10px 12px;
+  font-weight: 600;
+}
+
+.notice {
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  background: #fdf3e2;
+  color: #7a4a06;
 }
 
 /* ---------- empty state ---------- */
@@ -187,7 +231,7 @@ button {
   margin-top: 8px;
 }
 
-/* ---------- cards ---------- */
+/* ---------- lists and trip cards ---------- */
 .card-list {
   display: grid;
   gap: 10px;
@@ -196,23 +240,92 @@ button {
   list-style: none;
 }
 
-.card {
-  display: block;
+.trip-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
   min-height: var(--tap);
-  padding: 14px var(--space);
+  padding: 12px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   color: var(--color-text);
-  font-weight: 600;
   text-decoration: none;
 }
+
+.trip-card:active {
+  background: var(--color-primary-soft);
+}
+
+.trip-card-cover {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  background: var(--cover);
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.trip-card-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;   /* lets long names wrap instead of widening the page */
+  gap: 2px;
+}
+
+.trip-card-name {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.trip-card-places {
+  color: var(--color-muted);
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.trip-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.archive-row {
+  display: grid;
+  gap: 6px;
+}
+
+.archive-row .button {
+  justify-self: end;
+}
+
+/* Small labels like "Po 12 dienų" */
+.badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-soon   { background: var(--color-primary-soft); color: var(--color-primary-dark); }
+.badge-active { background: var(--color-success-soft); color: var(--color-success); }
+.badge-muted  { background: #eef0f3; color: var(--color-muted); }
 
 /* ---------- buttons ---------- */
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
   min-height: var(--tap);
   padding: 0 18px;
   border: 1px solid var(--color-border);
@@ -220,7 +333,13 @@ button {
   background: var(--color-surface);
   color: var(--color-text);
   font-weight: 600;
+  text-decoration: none;
   cursor: pointer;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 .button-primary {
@@ -233,24 +352,390 @@ button {
   background: var(--color-primary-dark);
 }
 
-/* ---------- update banner ---------- */
-.update-banner {
+.button-danger {
+  border-color: var(--color-danger);
+  background: var(--color-danger);
+  color: #fff;
+}
+
+.button-small {
+  padding: 0 14px;
+  font-size: 15px;
+}
+
+.icon-button {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: var(--tap);
+  height: var(--tap);
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  color: inherit;
+  cursor: pointer;
+}
+
+/* ---------- forms ---------- */
+.form {
+  display: grid;
+  gap: 18px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.field-label {
+  font-weight: 600;
+}
+
+.field-hint {
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.form-note {
+  margin-top: -10px;
+}
+
+.field-error {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-danger);
+}
+
+/* 16 px text stops iPhones from zooming into the field */
+.input {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 1px solid #c4cad3;
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 16px;
+}
+
+.input:focus {
+  border-color: var(--color-primary);
+  outline: 2px solid var(--color-primary-soft);
+}
+
+.has-error .input {
+  border-color: var(--color-danger);
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+/* Places: chips + add field */
+.places {
+  display: grid;
+  gap: 8px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  max-width: 100%;
+  padding-left: 12px;
+  border-radius: 999px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-dark);
+  font-weight: 600;
+}
+
+.chip span {
+  overflow-wrap: anywhere;
+}
+
+.chip-remove {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.places-add {
+  display: flex;
+  gap: 8px;
+}
+
+/* Colour swatches */
+.color-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.swatch {
+  width: var(--tap);
+  height: var(--tap);
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: var(--cover);
+  cursor: pointer;
+}
+
+.swatch[aria-checked="true"] {
+  border-color: var(--color-surface);
+  box-shadow: 0 0 0 3px var(--cover);
+}
+
+/* ---------- trip dashboard ---------- */
+.trip-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 18px var(--space);
+  border-radius: var(--radius);
+  background: var(--cover);
+  color: #fff;
+}
+
+.trip-header-text {
+  min-width: 0;
+}
+
+.trip-header-name {
+  font-size: 24px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.trip-header-places {
+  margin-top: 4px;
+  opacity: 0.92;
+  overflow-wrap: anywhere;
+}
+
+.trip-header-dates {
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+.stage-card {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+  margin-bottom: 12px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.stage-card.is-active {
+  border-color: var(--color-success);
+  background: var(--color-success-soft);
+}
+
+.stage-label {
+  color: var(--color-muted);
+  font-weight: 600;
+}
+
+.stage-big {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.stage-text {
+  color: var(--color-muted);
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tile {
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: 6px;
+  min-height: 112px;
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-muted);
+}
+
+.tile .icon {
+  width: 26px;
+  height: 26px;
+  color: var(--color-primary);
+}
+
+.tile-name {
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.3;
+}
+
+/* ---------- dialogs and the action sheet ---------- */
+.modal {
+  width: calc(100% - 32px);
+  max-width: 420px;
+  padding: 0;
+  border: 0;
+  border-radius: 16px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+.modal::backdrop {
+  background: rgba(15, 23, 32, 0.5);
+}
+
+.modal-box {
+  padding: 20px;
+}
+
+.modal-title {
+  font-size: 20px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.modal-text {
+  margin-top: 8px;
+  color: var(--color-muted);
+  overflow-wrap: anywhere;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* The ⋯ menu slides up from the bottom */
+.sheet {
+  width: 100%;
+  max-width: 640px;
+  margin: auto auto 0;
+  border-radius: 16px 16px 0 0;
+}
+
+.sheet .modal-box {
+  padding: 8px var(--space) calc(var(--space) + env(safe-area-inset-bottom));
+}
+
+.sheet-title {
+  padding: 10px 0;
+  font-size: 15px;
+  color: var(--color-muted);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.sheet-list {
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.sheet-action {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 8px;
+  border: 0;
+  border-top: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text);
+  font-size: 17px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sheet-action.is-danger {
+  color: var(--color-danger);
+  font-weight: 600;
+}
+
+.sheet-cancel {
+  width: 100%;
+}
+
+/* ---------- bottom messages: toast and update banner ---------- */
+.bottom-stack {
   position: fixed;
   left: var(--space);
   right: var(--space);
   bottom: calc(var(--space) + env(safe-area-inset-bottom));
   z-index: 20;
+  display: grid;
+  gap: 8px;
+  max-width: 608px;
+  margin: 0 auto;
+  pointer-events: none; /* taps go through the empty area */
+}
+
+.toast,
+.update-banner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  max-width: 608px;
-  margin: 0 auto;
-  padding: 10px 10px 10px var(--space);
+  min-height: 52px;
+  padding: 6px 6px 6px var(--space);
   border-radius: var(--radius);
   background: var(--color-text);
   color: #fff;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+  pointer-events: auto;
+}
+
+.toast-action {
+  min-height: var(--tap);
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #ffd38a;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 /* ---------- wider screens ---------- */
@@ -261,5 +746,9 @@ button {
 
   .screen-title {
     font-size: 28px;
+  }
+
+  .tiles {
+    grid-template-columns: 1fr 1fr 1fr;
   }
 }
