@@ -5,7 +5,7 @@
 //   ConfirmDialog "Delete this trip?" with Cancel / Delete
 //   ActionSheet   a list of actions sliding up from the bottom (the ⋯ menu)
 
-import { useEffect, useRef } from 'preact/hooks';
+import { useLayoutEffect, useRef } from 'preact/hooks';
 import { html } from './html.js';
 import { t } from '../i18n.js';
 
@@ -14,7 +14,9 @@ let nextId = 1;
 export function Modal({ open, onClose, className = '', titleId, children }) {
   const ref = useRef(null);
 
-  useEffect(() => {
+  // useLayoutEffect runs right after the screen is updated (useEffect waits
+  // for a timer), so the box opens or closes in the same moment, never late.
+  useLayoutEffect(() => {
     const dialog = ref.current;
     if (open && !dialog.open) dialog.showModal();
     if (!open && dialog.open) dialog.close();

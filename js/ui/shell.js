@@ -18,6 +18,8 @@ import { Archive } from './archive.js';
 import { TripForm } from './trip-form.js';
 import { TripDashboard } from './trip-dashboard.js';
 import { TripBookings } from './trip-bookings.js';
+import { BookingForm } from './booking-form.js';
+import { BookingDetail } from './booking-detail.js';
 
 // Shown if the app cannot start, e.g. the browser blocks storage
 function StartupError() {
@@ -40,6 +42,9 @@ function Screen({ route }) {
     case 'tripEdit': return html`<${TripForm} id=${route.params.id} key=${'edit-' + route.params.id} />`;
     case 'trip': return html`<${TripDashboard} id=${route.params.id} key=${'trip-' + route.params.id} />`;
     case 'tripBookings': return html`<${TripBookings} id=${route.params.id} key=${'bookings-' + route.params.id} />`;
+    case 'bookingNew': return html`<${BookingForm} tripId=${route.params.id} key=${'booking-new-' + route.params.id} />`;
+    case 'bookingEdit': return html`<${BookingForm} tripId=${route.params.id} bookingId=${route.params.bookingId} key=${'booking-edit-' + route.params.bookingId} />`;
+    case 'booking': return html`<${BookingDetail} tripId=${route.params.id} bookingId=${route.params.bookingId} key=${'booking-' + route.params.bookingId} />`;
     default: return html`<${Home} />`;
   }
 }

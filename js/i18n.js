@@ -135,6 +135,7 @@ export function parseLocalDate(iso) {
 // (month: 'short' would give "11-16" in Lithuanian, so short uses the full month)
 const DATE_STYLES = {
   short: { month: 'long', day: 'numeric' },                   // lapkričio 16 d. / 16 November
+  day: { weekday: 'long', month: 'long', day: 'numeric' },    // gruodžio 20 d., sekmadienis
   medium: { year: 'numeric', month: 'long', day: 'numeric' }, // 2026 m. lapkričio 16 d.
   long: { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
 };
@@ -186,6 +187,35 @@ export function currencyName(code) {
   } catch (error) {
     return code;
   }
+}
+
+// A booking's time: '2026-12-20T06:10' -> "gruodžio 20 d. 06:10",
+// '2026-12-20' -> "gruodžio 20 d.". The year is added when it is not this year.
+export function formatDateTime(value) {
+  if (!value) return '';
+  const [date, time] = String(value).split('T');
+  const sameYear = date.slice(0, 4) === String(new Date().getFullYear());
+  const day = formatDate(date, sameYear ? 'short' : 'medium');
+  return time ? `${day} ${formatTime(value)}` : day;
+}
+
+// Reads a price typed by the user ("49,99", "49.99", "1 250") into cents.
+// Returns null for an empty field and NaN when it cannot be read.
+export function parseAmount(text, currency = 'EUR') {
+  const clean = String(text || '').replace(/[\s ]/g, '').replace(',', '.');
+  if (clean === '') return null;
+  const digits = currencyDigits(currency);
+  const pattern = digits > 0 ? new RegExp(`^\\d+(\\.\\d{1,${digits}})?$`) : /^\d+$/;
+  if (!pattern.test(clean)) return NaN;
+  return Math.round(Number(clean) * 10 ** digits);
+}
+
+// Cents back into the form: 4999 -> "49,99" (lt) / "49.99" (en)
+export function amountForInput(minorUnits, currency = 'EUR') {
+  if (minorUnits === null || minorUnits === undefined) return '';
+  const digits = currencyDigits(currency);
+  const text = (minorUnits / 10 ** digits).toFixed(digits);
+  return lang === 'lt' ? text.replace('.', ',') : text;
 }
 
 // When something was saved: '2026-11-16T09:51:00.000Z' -> "lapkričio 16 d."

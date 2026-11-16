@@ -63,6 +63,9 @@ Technical decisions made while building (the full list is in the plan doc and th
 | Shared origin with Mokis | Both apps live on tomaszalner-ui.github.io and share storage. Cache names start with `lagio-`, the service worker only deletes `lagio-` caches, and Lagio never clears storage site-wide. Own domain (lagio.lt) before testers |
 | Trip's own tripId | A trip's `tripId` is its own `id`, so one tripId lookup per store finds everything of a trip |
 | Duplicating a trip | Copies name, places, colour and currency; no dates |
+| Document ↔ booking | Only the document's `bookingId` links them; bookings have no `documentIds[]` |
+| Files | PDF or image; ask before adding a file over 20 MB; show space used per trip. File content in `files`, description in `documents` |
+| Booking types | flight, train, bus, ferry, car, stay, event, other; start/end labels follow the type. Address opens a Google Maps search link (tapped by the user, not fetched) |
 
 ## Build order (phase 1)
 1. Foundation ✓ (0.1.0, phone-tested 16 Nov 2026)

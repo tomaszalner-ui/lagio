@@ -7,6 +7,7 @@
 import { useState, useEffect } from 'preact/hooks';
 import { listTrips } from './modules/trips.js';
 import { listDocuments } from './modules/documents.js';
+import { listBookings } from './modules/bookings.js';
 
 const state = {
   ready: false,        // true once the database and texts are loaded
@@ -15,6 +16,7 @@ const state = {
   route: { name: 'home', params: {} }, // current screen, set by router.js
   trips: [],           // all trips that are not deleted (archived included)
   documents: { tripId: null, items: [] }, // the open trip's documents
+  bookings: { tripId: null, items: [] },  // the open trip's bookings, in time order
   toast: null,         // short message at the bottom, see ui/toast.js
   updateReady: false   // a new app version is waiting (see pwa.js)
 };
@@ -62,4 +64,9 @@ export async function reloadTrips() {
 // so PDFs of other trips are never loaded.
 export async function reloadDocuments(tripId) {
   setState({ documents: { tripId, items: await listDocuments(tripId) } });
+}
+
+// Reads one trip's bookings (only the open trip's are kept in the state).
+export async function reloadBookings(tripId) {
+  setState({ bookings: { tripId, items: await listBookings(tripId) } });
 }

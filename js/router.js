@@ -14,6 +14,9 @@ const ROUTES = [
   { name: 'tripNew', pattern: /^\/trip\/new\/?$/, keys: [] },
   { name: 'tripEdit', pattern: /^\/trip\/([^/]+)\/edit\/?$/, keys: ['id'] },
   { name: 'tripBookings', pattern: /^\/trip\/([^/]+)\/bookings\/?$/, keys: ['id'] },
+  { name: 'bookingNew', pattern: /^\/trip\/([^/]+)\/bookings\/new\/?$/, keys: ['id'] },
+  { name: 'bookingEdit', pattern: /^\/trip\/([^/]+)\/bookings\/([^/]+)\/edit\/?$/, keys: ['id', 'bookingId'] },
+  { name: 'booking', pattern: /^\/trip\/([^/]+)\/bookings\/([^/]+)\/?$/, keys: ['id', 'bookingId'] },
   { name: 'trip', pattern: /^\/trip\/([^/]+)\/?$/, keys: ['id'] }
 ];
 
@@ -41,7 +44,10 @@ export const paths = {
   tripNew: () => '#/trip/new',
   trip: (id) => '#/trip/' + encodeURIComponent(id),
   tripEdit: (id) => '#/trip/' + encodeURIComponent(id) + '/edit',
-  tripBookings: (id) => '#/trip/' + encodeURIComponent(id) + '/bookings'
+  tripBookings: (id) => '#/trip/' + encodeURIComponent(id) + '/bookings',
+  bookingNew: (id) => paths.tripBookings(id) + '/new',
+  booking: (id, bookingId) => paths.tripBookings(id) + '/' + encodeURIComponent(bookingId),
+  bookingEdit: (id, bookingId) => paths.booking(id, bookingId) + '/edit'
 };
 
 // Go to a screen from code, e.g. navigate(paths.trip(id)).

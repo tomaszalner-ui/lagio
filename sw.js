@@ -8,7 +8,7 @@
 // When you add a file to the app, add it to FILES too
 // (`node tools/check.mjs` warns if you forget).
 
-const VERSION = '0.3.0';
+const VERSION = '0.3.1';
 const CACHE = 'lagio-v' + VERSION;
 
 const FILES = [
@@ -22,9 +22,13 @@ const FILES = [
   'js/pwa.js',
   'js/router.js',
   'js/store.js',
+  'js/modules/bookings.js',
   'js/modules/documents.js',
   'js/modules/trips.js',
   'js/ui/archive.js',
+  'js/ui/booking-detail.js',
+  'js/ui/booking-form.js',
+  'js/ui/booking-parts.js',
   'js/ui/color-picker.js',
   'js/ui/dialog.js',
   'js/ui/document-viewer.js',

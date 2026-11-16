@@ -169,8 +169,11 @@ for (const file of jsFiles) {
   if (file !== 'js/db.js' && /\bindexedDB\b|IDB[A-Z]\w+/.test(source)) {
     problems.push(`${file}: uses IndexedDB directly (only js/db.js may)`);
   }
-  for (const match of source.matchAll(/https?:\/\/[^\s'"`)]+/g)) {
-    warnings.push(`${file}: network address "${match[0]}". Only the exchange-rate fetch is allowed.`);
+  // Lines marked "external link" are links the user taps, not calls by the app
+  for (const line of source.split('\n').filter((l) => !l.includes('external link'))) {
+    for (const match of line.matchAll(/https?:\/\/[^\s'"`)]+/g)) {
+      warnings.push(`${file}: network address "${match[0]}". Only the exchange-rate fetch is allowed.`);
+    }
   }
 }
 

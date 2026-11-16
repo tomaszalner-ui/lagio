@@ -69,7 +69,8 @@ a {
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
 }
 
@@ -772,6 +773,248 @@ select {
 
 .button-danger-text {
   color: var(--color-danger);
+}
+
+/* ---------- bookings ---------- */
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 20px 0 8px;
+}
+
+.section-head .section-title {
+  margin: 0;
+}
+
+.doc-section {
+  margin-top: 28px;
+}
+
+.day-group + .day-group {
+  margin-top: 16px;
+}
+
+.day-title {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.day-title::first-letter {
+  text-transform: uppercase;
+}
+
+.booking-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.booking-card:active {
+  background: var(--color-primary-soft);
+}
+
+.booking-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.booking-icon.is-large {
+  width: 56px;
+  height: 56px;
+}
+
+.booking-icon.is-large .icon {
+  width: 28px;
+  height: 28px;
+}
+
+.booking-body {
+  display: grid;
+  min-width: 0;
+}
+
+.booking-title {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.booking-time {
+  font-weight: 600;
+  color: var(--color-primary-dark);
+}
+
+.booking-meta {
+  font-size: 14px;
+  color: var(--color-muted);
+  overflow-wrap: anywhere;
+}
+
+/* Booking form */
+.type-picker {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.type-option {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 4px;
+  min-height: 64px;
+  padding: 6px 2px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 12px;
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+}
+
+.type-option .icon {
+  color: var(--color-primary);
+}
+
+.type-option[aria-checked="true"] {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.type-option[aria-checked="true"] .icon {
+  color: #fff;
+}
+
+.date-time {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.input:disabled {
+  background: #f0f2f5;
+  color: var(--color-muted);
+}
+
+.textarea {
+  min-height: 88px;
+  resize: vertical;
+  line-height: 1.4;
+}
+
+.input-code {
+  font-family: ui-monospace, "Cascadia Mono", Menlo, monospace;
+  letter-spacing: 1px;
+}
+
+/* Booking screen */
+.booking-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.booking-header-text {
+  min-width: 0;
+}
+
+.booking-type {
+  color: var(--color-muted);
+  font-weight: 600;
+}
+
+.booking-header-title {
+  font-size: 22px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.code-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border: 1px dashed var(--color-primary);
+  border-radius: var(--radius);
+  background: var(--color-primary-soft);
+}
+
+.code-value {
+  font-family: ui-monospace, "Cascadia Mono", Menlo, monospace;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  overflow-wrap: anywhere;
+}
+
+.detail-list {
+  margin: 0 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.detail-row {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: 10px;
+  padding: 10px 14px;
+}
+
+.detail-row + .detail-row {
+  border-top: 1px solid var(--color-border);
+}
+
+.detail-label {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.detail-value {
+  margin: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.detail-block {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.detail-note {
+  font-weight: 400;
+  white-space: pre-wrap;
+}
+
+.detail-buttons {
+  justify-content: space-between;
 }
 
 /* ---------- documents ---------- */

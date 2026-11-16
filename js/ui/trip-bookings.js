@@ -1,15 +1,17 @@
 // trip-bookings.js — the trip's "Tickets and bookings" screen
-// (#/trip/:id/bookings). Step 3a: the trip's documents (add, view, delete).
-// Bookings join this screen in step 3b.
+// (#/trip/:id/bookings): bookings grouped by day, then the trip's documents
+// (add, view, delete).
 
 import { useEffect, useState } from 'preact/hooks';
 import { html } from './html.js';
-import { useStore, reloadDocuments } from '../store.js';
-import { t, formatFileSize, formatTimestamp } from '../i18n.js';
+import { useStore, reloadDocuments, reloadBookings } from '../store.js';
+import { t, formatDate, formatFileSize, formatTimestamp } from '../i18n.js';
 import { paths } from '../router.js';
 import {
   ACCEPTED_TYPES, isLarge, documentKind, addDocument, totalSize, deleteDocument, undoDeleteDocument
 } from '../modules/documents.js';
+import { groupByDay } from '../modules/bookings.js';
+import { BookingCard } from './booking-parts.js';
 import { EmptyState } from './empty-state.js';
 import { ConfirmDialog } from './dialog.js';
 import { DocumentViewer } from './document-viewer.js';
@@ -43,16 +45,30 @@ function DocumentRow({ doc, onOpen }) {
     </li>`;
 }
 
+// The bookings, one block per day ("gruodžio 20 d., sekmadienis")
+function BookingList({ tripId, bookings }) {
+  return html`
+    ${groupByDay(bookings).map((group) => html`
+      <div class="day-group" key=${group.date || 'undated'}>
+        <h3 class="day-title">${group.date ? formatDate(group.date, 'day') : t('bookings.undated')}</h3>
+        <ul class="card-list">
+          ${group.bookings.map((booking) => html`
+            <li key=${booking.id}><${BookingCard} tripId=${tripId} booking=${booking} /></li>`)}
+        </ul>
+      </div>`)}`;
+}
+
 export function TripBookings({ id }) {
   const trips = useStore((s) => s.trips);
   const documents = useStore((s) => s.documents);
+  const bookings = useStore((s) => s.bookings);
   const [viewing, setViewing] = useState(null);          // document open in the viewer
   const [waitingLarge, setWaitingLarge] = useState(null); // files waiting for "add anyway?"
   const [deleting, setDeleting] = useState(null);        // document waiting for "delete?"
   const [adding, setAdding] = useState(false);
 
   useEffect(() => {
-    reloadDocuments(id).catch((error) => console.error(error));
+    Promise.all([reloadBookings(id), reloadDocuments(id)]).catch((error) => console.error(error));
   }, [id]);
 
   const trip = trips.find((item) => item.id === id);
@@ -60,6 +76,8 @@ export function TripBookings({ id }) {
 
   const loaded = documents.tripId === id;
   const allDocs = loaded ? documents.items : [];
+  const bookingsLoaded = bookings.tripId === id;
+  const tripBookings = bookingsLoaded ? bookings.items : [];
   const tripDocs = allDocs.filter((doc) => !doc.bookingId);
 
   async function addFiles(files) {
@@ -119,6 +137,24 @@ export function TripBookings({ id }) {
         <${ChevronLeft} /><span>${trip.name}</span>
       </a>
       <h1 class="screen-title screen-head">${t('dashboard.tiles.bookings')}</h1>
+
+      <section class="booking-section">
+        <div class="section-head">
+          <h2 class="section-title">${t('bookings.title')}</h2>
+          ${tripBookings.length > 0 && html`
+            <a class="button button-primary button-small" href=${paths.bookingNew(id)}>
+              <${PlusIcon} /><span>${t('bookings.new')}</span>
+            </a>`}
+        </div>
+        ${bookingsLoaded && tripBookings.length === 0
+          ? html`
+            <${EmptyState} title=${t('bookings.emptyTitle')} text=${t('bookings.emptyText')}>
+              <a class="button button-primary" href=${paths.bookingNew(id)}>
+                <${PlusIcon} /><span>${t('bookings.new')}</span>
+              </a>
+            <//>`
+          : html`<${BookingList} tripId=${id} bookings=${tripBookings} />`}
+      </section>
 
       <section class="doc-section">
         <h2 class="section-title">${t('documents.title')}</h2>
