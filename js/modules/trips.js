@@ -109,13 +109,14 @@ export async function listTrips() {
   return (await list('trips')).map(withDefaults);
 }
 
-// A copy with the same details. `name` comes from the screen, because this
-// file has no text. Later milestones decide which of the trip's records
-// (packing list, notes…) are copied too.
+// A copy with the same details, but without dates: a copy is usually the
+// start of a new trip, so the old dates would be wrong. `name` comes from the
+// screen, because this file has no text. Later milestones decide which of the
+// trip's records (packing list, notes…) are copied too.
 export async function duplicateTrip(id, { name }) {
   const trip = await get('trips', id);
   if (!trip) throw new Error('Trip not found: ' + id);
-  return createTrip({ ...cleanTrip(trip), name });
+  return createTrip({ ...cleanTrip(trip), name, startDate: '', endDate: '' });
 }
 
 export function archiveTrip(id) {

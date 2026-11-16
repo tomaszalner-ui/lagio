@@ -384,6 +384,7 @@ select {
 
 .field {
   display: grid;
+  align-content: start; /* extra height goes below the field, not between label and input */
   gap: 6px;
   min-width: 0;
 }
@@ -432,6 +433,7 @@ select {
 .field-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  align-items: start; /* an error under one field must not push the other down */
   gap: 12px;
 }
 

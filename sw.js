@@ -8,7 +8,7 @@
 // When you add a file to the app, add it to FILES too
 // (`node tools/check.mjs` warns if you forget).
 
-const VERSION = '0.2.0';
+const VERSION = '0.2.1';
 const CACHE = 'lagio-v' + VERSION;
 
 const FILES = [
