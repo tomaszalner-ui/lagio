@@ -1,0 +1,2 @@
+# Keep library files byte-for-byte as downloaded (checksums in vendor/README.md)
+vendor/* -text

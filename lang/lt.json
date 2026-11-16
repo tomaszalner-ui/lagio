@@ -1,0 +1,33 @@
+{
+  "app.name": "Lagio",
+
+  "nav.back": "Atgal",
+
+  "home.title": "Mano kelionės",
+  "home.emptyTitle": "Kelionių dar nėra",
+  "home.emptyText": "Čia matysite savo keliones: planą, bilietus, daiktų sąrašą ir išlaidas. Visa tai bus saugoma šiame telefone ir veiks be interneto.",
+
+  "trips.count": {
+    "one": "{count} kelionė",
+    "few": "{count} kelionės",
+    "many": "{count} kelionės",
+    "other": "{count} kelionių"
+  },
+  "trips.untitled": "Kelionė be pavadinimo",
+
+  "trip.comingSoonTitle": "Kelionės puslapis kuriamas",
+  "trip.comingSoonText": "Čia netrukus bus kelionės planas, bilietai ir kita informacija.",
+
+  "language.label": "Kalba",
+  "language.short.lt": "LT",
+  "language.short.en": "EN",
+  "language.name.lt": "Lietuvių",
+  "language.name.en": "English",
+
+  "update.text": "Yra nauja Lagio versija.",
+  "update.button": "Atnaujinti",
+
+  "error.startupTitle": "Nepavyko paleisti Lagio",
+  "error.startupText": "Gali būti, kad naršyklė neleidžia saugoti duomenų, pavyzdžiui, privačiame lange. Pabandykite atidaryti įprastame lange.",
+  "error.retry": "Bandyti dar kartą"
+}

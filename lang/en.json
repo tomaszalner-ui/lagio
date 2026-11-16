@@ -1,0 +1,31 @@
+{
+  "app.name": "Lagio",
+
+  "nav.back": "Back",
+
+  "home.title": "My trips",
+  "home.emptyTitle": "No trips yet",
+  "home.emptyText": "Your trips will appear here: plan, tickets, packing list and spending. Everything is kept on this phone and works without internet.",
+
+  "trips.count": {
+    "one": "{count} trip",
+    "other": "{count} trips"
+  },
+  "trips.untitled": "Untitled trip",
+
+  "trip.comingSoonTitle": "Trip page in progress",
+  "trip.comingSoonText": "The trip plan, tickets and other details will be here soon.",
+
+  "language.label": "Language",
+  "language.short.lt": "LT",
+  "language.short.en": "EN",
+  "language.name.lt": "Lietuvių",
+  "language.name.en": "English",
+
+  "update.text": "A new version of Lagio is available.",
+  "update.button": "Update",
+
+  "error.startupTitle": "Lagio could not start",
+  "error.startupText": "Your browser may not allow saving data, for example in a private window. Try opening Lagio in a normal window.",
+  "error.retry": "Try again"
+}
