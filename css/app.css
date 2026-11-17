@@ -1784,3 +1784,173 @@ textarea {
   color: var(--color-muted);
   opacity: 0.8;
 }
+
+/* Day title and order (itinerary 6b) */
+.day-card-heading {
+  min-width: 0;
+}
+
+.day-card-title {
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  overflow-wrap: anywhere;
+}
+
+.day-title-edit {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin: -8px -8px -8px 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-muted);
+  cursor: pointer;
+}
+
+.day-card-actions {
+  display: flex;
+  align-items: stretch;
+  border-top: 1px solid var(--color-border);
+}
+
+.day-card-actions .plan-add {
+  flex: 1;
+  border-top: 0;
+}
+
+.plan-reorder {
+  min-height: var(--tap);
+  padding: 0 14px;
+  border: 0;
+  border-left: 1px solid var(--color-border);
+  border-radius: 0 0 var(--radius) 0;
+  background: transparent;
+  color: var(--color-muted);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.plan-reorder[aria-pressed="true"] {
+  color: var(--color-primary);
+}
+
+.plan-move {
+  display: flex;
+  flex: none;
+}
+
+.plan-move-button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: var(--tap);
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.plan-move-button:disabled {
+  color: var(--color-border);
+  cursor: default;
+}
+
+/* "Šiandien" on the trip dashboard (today-card.js) */
+.today-card {
+  margin-bottom: 12px;
+  border: 1px solid var(--color-success);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.today-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--color-success-soft);
+}
+
+.today-title {
+  font-size: 18px;
+  color: var(--color-success);
+}
+
+.today-day {
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-muted);
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.today-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.today-entry {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px 0 14px;
+  border-top: 1px solid var(--color-border);
+}
+
+.today-main {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 10px;
+  min-width: 0;
+  min-height: 56px;
+  padding: 8px 4px;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.ticket-button {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  gap: 4px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ticket-button .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.today-empty {
+  padding: 12px 14px;
+  color: var(--color-muted);
+}
+
+.today-all {
+  display: block;
+  min-height: var(--tap);
+  padding: 12px 14px;
+  border-top: 1px solid var(--color-border);
+  font-weight: 600;
+  text-decoration: none;
+}

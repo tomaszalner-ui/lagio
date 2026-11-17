@@ -30,6 +30,8 @@ function Icon({ d, weight = 2 }) {
 }
 
 export const ChevronLeft = () => html`<${Icon} d="M15 5l-7 7 7 7" />`;
+export const ChevronUp = () => html`<${Icon} d="M6 15l6-6 6 6" />`;
+export const ChevronDown = () => html`<${Icon} d="M6 9l6 6 6-6" />`;
 export const PlusIcon = () => html`<${Icon} d="M12 5v14M5 12h14" />`;
 export const MinusIcon = () => html`<${Icon} d="M5 12h14" />`;
 export const FoodIcon = () => html`<${Icon} d="M7 3v8M5 3v4a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2 0-3.5 2-3.5 5.5S15 13 17 13" />`;

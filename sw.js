@@ -14,7 +14,7 @@
 // FILES, PDFJS_FILES and PDFJS_VERSION are written by tools/update-sw.mjs;
 // `node tools/check.mjs` checks them.
 
-const VERSION = '0.6.1';
+const VERSION = '0.6.2';
 const CACHE = 'lagio-v' + VERSION;
 
 const PDFJS_VERSION = '6.5.438';
@@ -60,6 +60,7 @@ const FILES = [
   'js/ui/places-input.js',
   'js/ui/shell.js',
   'js/ui/toast.js',
+  'js/ui/today-card.js',
   'js/ui/trip-actions.js',
   'js/ui/trip-bookings.js',
   'js/ui/trip-card.js',

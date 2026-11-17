@@ -76,6 +76,38 @@ export function undoDeleteItem(id) {
   return restore('itineraryItems', id);
 }
 
+// ---------- day titles ('days' store: { date, title }) ----------
+
+export function listDays(tripId) {
+  return list('days', { tripId });
+}
+
+// Sets (or clears, with '') the title of one day, e.g. 'Florencija'
+export async function setDayTitle(tripId, date, title) {
+  const clean = String(title || '').trim();
+  const existing = (await listDays(tripId)).find((day) => day.date === date);
+  if (existing) return update('days', existing.id, { title: clean });
+  if (!clean) return null;
+  return create('days', { tripId, date, title: clean, order: 0 });
+}
+
+// ---------- order of items without a time ----------
+
+// Moves an untimed item one place up (-1) or down (+1) among the day's
+// untimed items. Orders are renumbered 1, 2, 3… so they stay tidy.
+export async function moveUntimed(tripId, item, direction) {
+  const untimed = (await listItems(tripId))
+    .filter((other) => other.date === item.date && !other.startTime)
+    .sort((a, b) => (a.order || 0) - (b.order || 0) || a.createdAt.localeCompare(b.createdAt));
+  const from = untimed.findIndex((other) => other.id === item.id);
+  const to = from + direction;
+  if (from < 0 || to < 0 || to >= untimed.length) return;
+  [untimed[from], untimed[to]] = [untimed[to], untimed[from]];
+  for (let i = 0; i < untimed.length; i += 1) {
+    if (untimed[i].order !== i + 1) await update('itineraryItems', untimed[i].id, { order: i + 1 });
+  }
+}
+
 // ---------- days and the timeline ----------
 
 // All dates of the trip: ['2026-12-20', '2026-12-21', …]; [] without dates.
@@ -123,12 +155,15 @@ function entriesFor(date, items, bookings) {
 }
 
 // The whole plan:
-//   days:  [{ date, number (1, 2, …), entries }] for each trip date
+//   days:  [{ date, number (1, 2, …), title, entries }] for each trip date
 //   other: [{ date, entries }] for dates outside the trip that still have
 //          items or bookings (e.g. after the trip's dates were changed)
-export function buildTimeline(trip, items, bookings) {
+export function buildTimeline(trip, items, bookings, dayRecords = []) {
+  const titles = new Map(dayRecords.filter((day) => day.title).map((day) => [day.date, day.title]));
   const dates = tripDates(trip);
-  const days = dates.map((date, index) => ({ date, number: index + 1, entries: entriesFor(date, items, bookings) }));
+  const days = dates.map((date, index) => ({
+    date, number: index + 1, title: titles.get(date) || '', entries: entriesFor(date, items, bookings)
+  }));
   const inTrip = new Set(dates);
   const outside = new Set();
   for (const item of items) if (!inTrip.has(item.date)) outside.add(item.date);
@@ -139,6 +174,6 @@ export function buildTimeline(trip, items, bookings) {
     // e.g. a hotel's check-out after the trip's dates were shortened
     if (endDate && endDate !== startDate && SHOWS_END.includes(booking.type) && !inTrip.has(endDate)) outside.add(endDate);
   }
-  const other = [...outside].sort().map((date) => ({ date, entries: entriesFor(date, items, bookings) }));
+  const other = [...outside].sort().map((date) => ({ date, title: titles.get(date) || '', entries: entriesFor(date, items, bookings) }));
   return { days, other };
 }

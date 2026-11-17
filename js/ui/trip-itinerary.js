@@ -10,7 +10,8 @@ import { t, formatDate, formatTime } from '../i18n.js';
 import { paths } from '../router.js';
 import { todayIso } from '../modules/trips.js';
 import {
-  ITEM_TYPES, validateItem, createItem, updateItem, deleteItem, undoDeleteItem, buildTimeline
+  ITEM_TYPES, validateItem, createItem, updateItem, deleteItem, undoDeleteItem, buildTimeline,
+  setDayTitle, moveUntimed
 } from '../modules/itinerary.js';
 import { Field } from './field.js';
 import { EmptyState } from './empty-state.js';
@@ -18,10 +19,12 @@ import { Modal } from './dialog.js';
 import { NotFound } from './not-found.js';
 import { showToast } from './toast.js';
 import { TypeIcon, timeLabels } from './booking-parts.js';
-import { ChevronLeft, PlusIcon, PinIcon, StarIcon, FoodIcon, BusIcon, NoteIcon } from './illustrations.js';
+import {
+  ChevronLeft, ChevronUp, ChevronDown, PlusIcon, PinIcon, PencilIcon, StarIcon, FoodIcon, BusIcon, NoteIcon
+} from './illustrations.js';
 
-// Text key and icon of each plan item type
-const ITEM_TYPE_INFO = {
+// Text key and icon of each plan item type (also used by today-card.js)
+export const ITEM_TYPE_INFO = {
   activity: { key: 'itinerary.type.activity', Icon: StarIcon },
   food: { key: 'itinerary.type.food', Icon: FoodIcon },
   transport: { key: 'itinerary.type.transport', Icon: BusIcon },
@@ -37,9 +40,9 @@ const ERROR_TEXT = {
 };
 
 // A map search for the address: a link the user taps, not a call by Lagio
-const mapLink = (address) => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(address); // external link
+export const mapLink = (address) => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(address); // external link
 
-const time = (date, value) => (value ? formatTime(`${date}T${value}`) : '');
+export const time = (date, value) => (value ? formatTime(`${date}T${value}`) : '');
 
 // The add / edit box for one plan item
 function ItemDialog({ trip, item, date, onClose }) {
@@ -145,8 +148,9 @@ function ItemDialog({ trip, item, date, onClose }) {
     <//>`;
 }
 
-// One line of the timeline
-function Entry({ trip, entry, date, onEditItem }) {
+// One line of the timeline. `move` (only while reordering an untimed item)
+// shows ↑↓ instead of the map pin.
+function Entry({ trip, entry, date, onEditItem, move = null }) {
   if (entry.kind === 'booking') {
     const { booking, role } = entry;
     const labels = timeLabels(booking.type);
@@ -177,20 +181,75 @@ function Entry({ trip, entry, date, onEditItem }) {
           ${item.note && html`<span class="plan-note">${item.note}</span>`}
         </span>
       </button>
-      ${item.address && html`
-        <a class="plan-map" href=${mapLink(item.address)} target="_blank" rel="noopener"
-          aria-label=${t('itinerary.openMap', { name: item.title })}><${PinIcon} /></a>`}
+      ${move
+        ? html`
+          <span class="plan-move">
+            <button type="button" class="plan-move-button" disabled=${!move.canUp} aria-label=${t('itinerary.moveUp', { name: item.title })}
+              onClick=${() => move.onMove(item, -1)}><${ChevronUp} /></button>
+            <button type="button" class="plan-move-button" disabled=${!move.canDown} aria-label=${t('itinerary.moveDown', { name: item.title })}
+              onClick=${() => move.onMove(item, 1)}><${ChevronDown} /></button>
+          </span>`
+        : item.address && html`
+          <a class="plan-map" href=${mapLink(item.address)} target="_blank" rel="noopener"
+            aria-label=${t('itinerary.openMap', { name: item.title })}><${PinIcon} /></a>`}
     </li>`;
 }
 
-function DayCard({ trip, day, isToday, onAdd, onEditItem }) {
+// The box for a day's title ("Florencija", "Poilsio diena"); empty clears it
+function DayTitleDialog({ trip, day, onClose }) {
+  const [title, setTitle] = useState(day.title || '');
+  const titleId = useRef('day-title-dialog').current;
+
+  async function save(event) {
+    event.preventDefault();
+    try {
+      await setDayTitle(trip.id, day.date, title);
+      await reloadItinerary(trip.id);
+      onClose();
+    } catch (error) {
+      console.error(error);
+      showToast({ text: t('common.error') });
+    }
+  }
+
+  return html`
+    <${Modal} open=${true} onClose=${onClose} titleId=${titleId}>
+      <h2 class="modal-title" id=${titleId}>${formatDate(day.date, 'day')}</h2>
+      <form class="form modal-form" onSubmit=${save} noValidate>
+        <${Field} id="day-title" label=${t('itinerary.dayTitle')} hint=${t('itinerary.dayTitleHint')}>
+          <input id="day-title" class="input" type="text" value=${title} maxLength="60" autocomplete="off"
+            placeholder=${t('itinerary.dayTitlePlaceholder')} onInput=${(event) => setTitle(event.currentTarget.value)} />
+        <//>
+        <div class="modal-buttons">
+          <button type="button" class="button" onClick=${onClose}>${t('common.cancel')}</button>
+          <button type="submit" class="button button-primary">${t('common.save')}</button>
+        </div>
+      </form>
+    <//>`;
+}
+
+function DayCard({ trip, day, isToday, onAdd, onEditItem, onEditTitle, onMove }) {
+  const [reordering, setReordering] = useState(false);
+  // Items without a time, in their order: only these can be moved
+  const untimed = day.entries.filter((entry) => entry.kind === 'item' && !entry.time).map((entry) => entry.item);
+  const moveFor = (entry) => {
+    if (!reordering || entry.kind !== 'item' || entry.time) return null;
+    const index = untimed.findIndex((item) => item.id === entry.item.id);
+    return { canUp: index > 0, canDown: index < untimed.length - 1, onMove };
+  };
+
   return html`
     <section class=${'day-card' + (isToday ? ' is-today' : '')} id=${'day-' + day.date}>
       <header class="day-card-head">
-        <h2 class="day-card-date">${formatDate(day.date, 'day')}</h2>
+        <div class="day-card-heading">
+          <h2 class="day-card-date">${formatDate(day.date, 'day')}</h2>
+          ${day.title && html`<p class="day-card-title">${day.title}</p>`}
+        </div>
         <span class="day-card-number">
           ${isToday && html`<span class="badge badge-active">${t('itinerary.today')}</span>`}
           ${day.number && t('itinerary.dayN', { n: String(day.number) })}
+          <button type="button" class="day-title-edit" aria-label=${t('itinerary.editDayTitle')} title=${t('itinerary.editDayTitle')}
+            onClick=${() => onEditTitle(day)}><${PencilIcon} /></button>
         </span>
       </header>
       ${day.entries.length === 0
@@ -199,11 +258,17 @@ function DayCard({ trip, day, isToday, onAdd, onEditItem }) {
             ${day.entries.map((entry) => html`
               <${Entry}
                 key=${entry.kind + (entry.item ? entry.item.id : entry.booking.id + entry.role)}
-                trip=${trip} entry=${entry} date=${day.date} onEditItem=${onEditItem} />`)}
+                trip=${trip} entry=${entry} date=${day.date} onEditItem=${onEditItem} move=${moveFor(entry)} />`)}
           </ul>`}
-      <button type="button" class="plan-add" onClick=${() => onAdd(day.date)}>
-        <${PlusIcon} /><span>${t('itinerary.add')}</span>
-      </button>
+      <div class="day-card-actions">
+        <button type="button" class="plan-add" onClick=${() => onAdd(day.date)}>
+          <${PlusIcon} /><span>${t('itinerary.add')}</span>
+        </button>
+        ${untimed.length > 1 && html`
+          <button type="button" class="plan-reorder" aria-pressed=${reordering} onClick=${() => setReordering(!reordering)}>
+            ${reordering ? t('itinerary.reorderDone') : t('itinerary.reorder')}
+          </button>`}
+      </div>
     </section>`;
 }
 
@@ -212,6 +277,7 @@ export function TripItinerary({ id }) {
   const itinerary = useStore((s) => s.itinerary);
   const bookings = useStore((s) => s.bookings);
   const [dialog, setDialog] = useState(null); // { item } or { date }
+  const [titleFor, setTitleFor] = useState(null); // a day whose title is being edited
   const scrolled = useRef(false);
 
   useEffect(() => {
@@ -243,7 +309,24 @@ export function TripItinerary({ id }) {
       </section>`;
   }
 
-  const timeline = loaded ? buildTimeline(trip, itinerary.items, bookings.items) : { days: [], other: [] };
+  const timeline = loaded ? buildTimeline(trip, itinerary.items, bookings.items, itinerary.days) : { days: [], other: [] };
+
+  async function move(item, direction) {
+    try {
+      await moveUntimed(trip.id, item, direction);
+      await reloadItinerary(trip.id);
+    } catch (error) {
+      console.error(error);
+      showToast({ text: t('common.error') });
+    }
+  }
+  const dayProps = {
+    trip,
+    onAdd: (date) => setDialog({ date }),
+    onEditItem: (item) => setDialog({ item }),
+    onEditTitle: setTitleFor,
+    onMove: move
+  };
 
   return html`
     <section class="screen">
@@ -251,16 +334,15 @@ export function TripItinerary({ id }) {
       <h1 class="screen-title screen-head">${t('dashboard.tiles.itinerary')}</h1>
 
       ${timeline.days.map((day) => html`
-        <${DayCard} key=${day.date} trip=${trip} day=${day} isToday=${day.date === today}
-          onAdd=${(date) => setDialog({ date })} onEditItem=${(item) => setDialog({ item })} />`)}
+        <${DayCard} key=${day.date} day=${day} isToday=${day.date === today} ...${dayProps} />`)}
 
       ${timeline.other.length > 0 && html`
         <h2 class="section-title">${t('itinerary.otherDays')}</h2>
         <p class="muted other-days-hint">${t('itinerary.otherDaysHint')}</p>
         ${timeline.other.map((day) => html`
-          <${DayCard} key=${day.date} trip=${trip} day=${day} isToday=${day.date === today}
-            onAdd=${(date) => setDialog({ date })} onEditItem=${(item) => setDialog({ item })} />`)}`}
+          <${DayCard} key=${day.date} day=${day} isToday=${day.date === today} ...${dayProps} />`)}`}
 
+      ${titleFor && html`<${DayTitleDialog} trip=${trip} day=${titleFor} onClose=${() => setTitleFor(null)} />`}
       ${dialog && html`
         <${ItemDialog} trip=${trip} item=${dialog.item || null} date=${dialog.date}
           onClose=${() => setDialog(null)} />`}

@@ -17,3 +17,21 @@
 | 9 | A trip without dates. | "Nurodykite kelionės datas" with **Nurodyti datas**. | ✔ |
 | 10 | Export the trip; EN; 360 px; airplane mode. | Plan items are in the trip file; "Sunday 20 December · Day 1", "Departure", "Check-out"; no sideways scrolling; works offline. | ✔ |
 | 11 | Phone: plan a real day. | Easy to add and read. | Phone |
+
+Phone test by the owner on 2026-11-17 (versions 0.6.0–0.6.1): bookings on their days, adding/editing/moving plan items, the map pin, "Šiandien" and the version line work.
+
+## Step 6b: day titles, order, "Šiandien" on the dashboard (version 0.6.2)
+
+✔ = passed in headless Edge on 2026-11-17. "Phone" = to check on the owner's phone.
+
+| # | Steps | Expected | Result |
+| --- | --- | --- | --- |
+| 1 | A trip happening now with today: a museum (09:00, 2 tickets), lunch 13:00 with an address, a flight 18:20 (1 PDF ticket), three items without a time. Open the trip. | Under "Diena 4 iš 7": a green **Šiandien · Diena 4** card with today's entries by time, untimed ones last; "Bilietai (2)" on the museum, **Bilietas** on the flight, a map pin on lunch, "Visas kelionės planas →" at the bottom. | ✔ |
+| 2 | Tap **Bilietas**. | The ticket opens at once in the viewer (all pages); no Delete button there. | ✔ |
+| 3 | Tap **Bilietai (2)**. | The booking opens with both tickets. | ✔ |
+| 4 | A trip that has not started. | No "Šiandien" card. | ✔ |
+| 5 | Itinerary → ✎ on a day → "Roma: senamiestis" → Išsaugoti. Then clear it. | The title shows under the date and in the dashboard card ("Diena 4 · Roma: senamiestis"); clearing removes it. | ✔ |
+| 6 | A day with ≥2 items without a time → **Keisti tvarką**. | ↑↓ only on those items (the top one has no ↑, the bottom one no ↓); the button turns into "Baigti". | ✔ |
+| 7 | Move "Trevi fontanas" up; reload. | New order Kava, Trevi fontanas, Pantheonas — kept after reload. | ✔ |
+| 8 | Export; EN; 360 px; airplane mode. | Day titles are in the trip file; "Today · Day 4", "Tickets (2)"; no sideways scrolling; the card and the ticket work offline. | ✔ |
+| 9 | Phone: on a real travel day, open the trip and tap the ticket. | One tap from the trip to the boarding pass. | Phone |

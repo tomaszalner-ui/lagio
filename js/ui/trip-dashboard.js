@@ -5,7 +5,7 @@
 
 import { useEffect, useState } from 'preact/hooks';
 import { html } from './html.js';
-import { useStore, reloadChecklist } from '../store.js';
+import { useStore, reloadChecklist, reloadItinerary, reloadBookings, reloadDocuments } from '../store.js';
 import { t, formatDateRange, formatTimestamp } from '../i18n.js';
 import { backupStatus, dismissBackupReminder } from '../transfer.js';
 import { navigate, paths } from '../router.js';
@@ -18,6 +18,7 @@ import { ActionSheet, ConfirmDialog } from './dialog.js';
 import { NotFound } from './not-found.js';
 import { archiveWithUndo, restoreFromArchive, duplicate, deleteWithUndo } from './trip-actions.js';
 import { ExportDialog } from './export-dialog.js';
+import { TodayCard } from './today-card.js';
 
 // The parts of a trip, in the order shown. A tile with `path` opens its
 // screen; the others are marked "coming soon" until their milestone.
@@ -92,6 +93,9 @@ function BackupReminder({ lastExport, onExport, onDismiss }) {
 export function TripDashboard({ id }) {
   const trips = useStore((s) => s.trips);
   const checklist = useStore((s) => s.checklist);
+  const itinerary = useStore((s) => s.itinerary);
+  const bookings = useStore((s) => s.bookings);
+  const documents = useStore((s) => s.documents);
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -103,9 +107,10 @@ export function TripDashboard({ id }) {
     backupStatus(id).then(setBackup).catch((error) => console.error(error));
   }, [id, exporting]);
 
-  // The packing list's progress for its tile
+  // The packing list's progress for its tile; today's plan during the trip
   useEffect(() => {
-    reloadChecklist(id).catch((error) => console.error(error));
+    Promise.all([reloadChecklist(id), reloadItinerary(id), reloadBookings(id), reloadDocuments(id)])
+      .catch((error) => console.error(error));
   }, [id]);
 
   const trip = trips.find((item) => item.id === id);
@@ -150,6 +155,10 @@ export function TripDashboard({ id }) {
       ${trip.archived && html`<p class="notice">${t('dashboard.archivedNote')}</p>`}
 
       <${StageCard} trip=${trip} />
+
+      ${getTripStage(trip).stage === 'active' && itinerary.tripId === trip.id && bookings.tripId === trip.id && documents.tripId === trip.id && html`
+        <${TodayCard} trip=${trip} items=${itinerary.items} days=${itinerary.days}
+          bookings=${bookings.items} documents=${documents.items} />`}
 
       ${backup && backup.needed && !trip.archived && getTripStage(trip).stage !== 'done' && html`
         <${BackupReminder}
