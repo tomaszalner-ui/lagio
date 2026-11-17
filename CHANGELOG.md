@@ -2,6 +2,7 @@
 
 One line per version: date, version, what changed in plain words.
 
+- 2026-11-17 · 0.6.1 · The app version is shown in small grey text at the bottom of Home.
 - 2026-11-17 · 0.6.0 · Itinerary: a card per trip day with your bookings placed automatically (departure, check-in, check-out) and your own plan items (activity, food, transport, note) with time, address with a map pin, and note.
 - 2026-11-16 · 0.5.2 · Travelers: add names to a trip; the packing list then has tabs Visi · Bendri · each person, with their own items, templates and progress. Removing a traveler moves their items to Bendri.
 - 2026-11-16 · 0.5.1 · Packing templates: Būtiniausi, Paplūdimys, Miestas, Žiema (socks and underwear per trip day, up to ×7), your own templates (save, rename, delete), no duplicates, Undo. Duplicating a trip copies its packing list unticked.

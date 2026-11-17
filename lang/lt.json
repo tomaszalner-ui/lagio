@@ -1,5 +1,6 @@
 {
   "app.name": "Lagio",
+  "app.version": "Lagio {version}",
 
   "common.cancel": "Atšaukti",
   "common.save": "Išsaugoti",

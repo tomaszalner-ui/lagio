@@ -12,6 +12,7 @@ import { EmptyState } from './empty-state.js';
 import { ImportDialog } from './import-dialog.js';
 import { Suitcase, PlusIcon, ImportIcon } from './illustrations.js';
 import { TripCard } from './trip-card.js';
+import { APP_VERSION } from '../version.js';
 
 const IMPORT_INPUT_ID = 'trip-import-input';
 
@@ -56,6 +57,7 @@ export function Home() {
       ${visible.length > 0 && importButton('button-small')}
       ${archivedCount > 0 && html`
         <a class="archive-link" href=${paths.archive()}>${t('home.archiveLink', { count: archivedCount })}</a>`}
+      <p class="app-version">${t('app.version', { version: APP_VERSION })}</p>
     </div>
     <input
       id=${IMPORT_INPUT_ID}

@@ -14,7 +14,7 @@
 // FILES, PDFJS_FILES and PDFJS_VERSION are written by tools/update-sw.mjs;
 // `node tools/check.mjs` checks them.
 
-const VERSION = '0.6.0';
+const VERSION = '0.6.1';
 const CACHE = 'lagio-v' + VERSION;
 
 const PDFJS_VERSION = '6.5.438';

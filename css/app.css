@@ -1776,3 +1776,11 @@ textarea {
   margin: -4px 0 10px;
   font-size: 14px;
 }
+
+/* Small grey version line at the bottom of Home */
+.app-version {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--color-muted);
+  opacity: 0.8;
+}
