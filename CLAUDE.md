@@ -89,8 +89,8 @@ Technical decisions made while building (the full list is in the plan doc and th
 4. Trip file export/import ✓ (0.4.2, phone-tested 16 Nov 2026)
 5. Packing checklist ✓ (0.5.2, phone-tested 17 Nov 2026)
 6. Itinerary ✓ (0.6.2, phone-tested 17 Nov 2026)
-7. Spending  ← current
-8. Password lock, notes, polish
+7. Spending ✓ (0.7.1, phone-tested 17 Nov 2026)
+8. Password lock, notes, polish  ← current
 9. Real test on the owner's own trip
 10. Testers
 
