@@ -9,6 +9,7 @@ import { listTrips } from './modules/trips.js';
 import { listDocuments } from './modules/documents.js';
 import { listBookings } from './modules/bookings.js';
 import { listItems } from './modules/checklist.js';
+import { listItems as listPlanItems } from './modules/itinerary.js';
 
 const state = {
   ready: false,        // true once the database and texts are loaded
@@ -19,6 +20,7 @@ const state = {
   documents: { tripId: null, items: [] }, // the open trip's documents
   bookings: { tripId: null, items: [] },  // the open trip's bookings, in time order
   checklist: { tripId: null, items: [] }, // the open trip's packing list
+  itinerary: { tripId: null, items: [] }, // the open trip's plan items
   toast: null,         // short message at the bottom, see ui/toast.js
   updateReady: false   // a new app version is waiting (see pwa.js)
 };
@@ -76,4 +78,9 @@ export async function reloadBookings(tripId) {
 // Reads one trip's packing list (only the open trip's is kept in the state).
 export async function reloadChecklist(tripId) {
   setState({ checklist: { tripId, items: await listItems(tripId) } });
+}
+
+// Reads one trip's plan items (only the open trip's are kept in the state).
+export async function reloadItinerary(tripId) {
+  setState({ itinerary: { tripId, items: await listPlanItems(tripId) } });
 }

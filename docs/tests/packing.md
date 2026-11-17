@@ -56,3 +56,5 @@ Phone test by the owner on 2026-11-16 (version 0.5.0): adding items works.
 | 9 | A trip without travelers. | No tabs; the list works as before. | ✔ |
 | 10 | EN; 360 px; airplane mode. | "All · Shared · Ieva K.", "Ieva K.: 1 of 26 packed"; the tab row scrolls sideways inside itself, the page does not; tabs and adding work offline. | ✔ |
 | 11 | Phone: a real family/group list. | Owner's judgement. | Phone |
+
+Phone test by the owner on 2026-11-17 (version 0.5.2): travelers, per-person tabs, templates per person and "Kieno" work.

@@ -76,6 +76,7 @@ Technical decisions made while building (the full list is in the plan doc and th
 | Packing list | One list per trip (`listName` "packing"), 6 fixed categories (keys), optional `quantity` ×2–99, `ownerId` null = shared. Steps: 5a list, 5b templates (built-in texts in lang files; own templates in settings), 5c travelers on the trip + per-person lists |
 | Packing templates | Built-in: Būtiniausi (pre-ticked), Paplūdimys, Miestas, Žiema; item texts are lang keys, saved as text in the current language; `perDay` = trip days up to 7, ×1 means none. Own templates in setting `packingTemplates` keep the quantities they were saved with. Duplicate copies the list unticked |
 | Travelers | Optional `travelers: [{ id, name }]` on the trip; packing items point to one with `ownerId` (null = Bendri). Removing a traveler moves their items to Bendri. Traveler ids only matter inside one trip, so copies keep them. Templates and "already on the list" work per person |
+| Itinerary | Plan items store their own `date` (not a dayId), so they keep their real date when the trip's dates change; dates outside the trip show under "Kitos dienos". Day records only for day titles (6b). Bookings appear on the timeline automatically (start, and end for travel/stay/car); no `bookingId` on items. Types: activity, food, transport, note. Timed entries sorted by time; untimed get ↑↓ (6b) |
 | Booking types | flight, train, bus, ferry, car, stay, event, other; start/end labels follow the type. Address opens a Google Maps search link (tapped by the user, not fetched) |
 
 ## Build order (phase 1)
@@ -83,8 +84,8 @@ Technical decisions made while building (the full list is in the plan doc and th
 2. Trips ✓ (0.2.1, phone-tested 16 Nov 2026)
 3. Bookings and documents ✓ (0.3.3, phone-tested 16 Nov 2026)
 4. Trip file export/import ✓ (0.4.2, phone-tested 16 Nov 2026)
-5. Packing checklist  ← current
-6. Itinerary
+5. Packing checklist ✓ (0.5.2, phone-tested 17 Nov 2026)
+6. Itinerary  ← current
 7. Spending
 8. Password lock, notes, polish
 9. Real test on the owner's own trip

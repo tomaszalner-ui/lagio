@@ -1623,3 +1623,156 @@ textarea {
   border-radius: 6px;
   font: inherit;
 }
+
+/* ---------- itinerary (trip-itinerary.js) ---------- */
+.day-card {
+  margin-bottom: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  scroll-margin-top: 72px; /* below the sticky top bar when scrolled to */
+}
+
+.day-card.is-today {
+  border-color: var(--color-success);
+  box-shadow: 0 0 0 1px var(--color-success);
+}
+
+.day-card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 14px 6px;
+}
+
+.day-card-date {
+  font-size: 16px;
+}
+
+.day-card-date::first-letter {
+  text-transform: uppercase;
+}
+
+.day-card-number {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.plan-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.plan-entry {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 6px 0 14px;
+  border-top: 1px solid var(--color-border);
+}
+
+.plan-time {
+  flex: none;
+  width: 54px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  line-height: 1.2;
+}
+
+.plan-main {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 10px;
+  min-width: 0;
+  min-height: 56px;
+  padding: 8px 4px;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.plan-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.plan-icon.is-own {
+  background: #fdf3e2;
+  color: #a2620c;
+}
+
+.plan-text {
+  display: grid;
+  min-width: 0;
+}
+
+.plan-title {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.plan-sub,
+.plan-note {
+  font-size: 14px;
+  color: var(--color-muted);
+  overflow-wrap: anywhere;
+}
+
+.plan-note {
+  white-space: pre-wrap;
+}
+
+.plan-map {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: var(--tap);
+  height: var(--tap);
+  border-radius: 999px;
+  color: var(--color-primary);
+}
+
+.plan-empty {
+  padding: 4px 14px 8px;
+  color: var(--color-muted);
+}
+
+.plan-add {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0 14px;
+  border: 0;
+  border-top: 1px solid var(--color-border);
+  border-radius: 0 0 var(--radius) var(--radius);
+  background: transparent;
+  color: var(--color-primary);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.other-days-hint {
+  margin: -4px 0 10px;
+  font-size: 14px;
+}

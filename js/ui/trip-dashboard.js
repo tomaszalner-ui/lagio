@@ -23,7 +23,7 @@ import { ExportDialog } from './export-dialog.js';
 // screen; the others are marked "coming soon" until their milestone.
 const TILES = [
   { key: 'dashboard.tiles.bookings', Icon: TicketIcon, path: paths.tripBookings },
-  { key: 'dashboard.tiles.itinerary', Icon: CalendarIcon },
+  { key: 'dashboard.tiles.itinerary', Icon: CalendarIcon, path: paths.tripItinerary },
   { key: 'dashboard.tiles.packing', Icon: ChecklistIcon, path: paths.tripPacking, packing: true },
   { key: 'dashboard.tiles.spending', Icon: WalletIcon },
   { key: 'dashboard.tiles.notes', Icon: NoteIcon }
