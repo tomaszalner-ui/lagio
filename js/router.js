@@ -11,6 +11,7 @@ import { setState } from './store.js';
 const ROUTES = [
   { name: 'home', pattern: /^\/$/, keys: [] },
   { name: 'archive', pattern: /^\/archive\/?$/, keys: [] },
+  { name: 'news', pattern: /^\/news\/?$/, keys: [] },
   { name: 'tripNew', pattern: /^\/trip\/new\/?$/, keys: [] },
   { name: 'tripEdit', pattern: /^\/trip\/([^/]+)\/edit\/?$/, keys: ['id'] },
   { name: 'tripNotes', pattern: /^\/trip\/([^/]+)\/notes\/?$/, keys: ['id'] },
@@ -47,6 +48,7 @@ export function parseHash(hash) {
 export const paths = {
   home: () => '#/',
   archive: () => '#/archive',
+  news: () => '#/news',
   tripNew: () => '#/trip/new',
   trip: (id) => '#/trip/' + encodeURIComponent(id),
   tripEdit: (id) => '#/trip/' + encodeURIComponent(id) + '/edit',

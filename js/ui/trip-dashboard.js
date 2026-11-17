@@ -25,8 +25,8 @@ import { TodayCard } from './today-card.js';
 // The parts of a trip, in the order shown. A tile with `path` opens its
 // screen; the others are marked "coming soon" until their milestone.
 const TILES = [
-  { key: 'dashboard.tiles.bookings', Icon: TicketIcon, path: paths.tripBookings },
-  { key: 'dashboard.tiles.itinerary', Icon: CalendarIcon, path: paths.tripItinerary },
+  { key: 'dashboard.tiles.bookings', Icon: TicketIcon, path: paths.tripBookings, count: 'bookings' },
+  { key: 'dashboard.tiles.itinerary', Icon: CalendarIcon, path: paths.tripItinerary, count: 'itinerary' },
   { key: 'dashboard.tiles.packing', Icon: ChecklistIcon, path: paths.tripPacking, packing: true },
   { key: 'dashboard.tiles.spending', Icon: WalletIcon, path: paths.tripSpending, spending: true },
   { key: 'dashboard.tiles.notes', Icon: NoteIcon, path: paths.tripNotes, notes: true }
@@ -164,6 +164,11 @@ export function TripDashboard({ id }) {
     ? summarize(spending.items, bookings.items) : null;
   const spentTotal = spent ? spent.total : 0;
   const noteCount = notes.tripId === trip.id ? notes.items.length : 0;
+  // Small counts on the tiles (shown when above 0)
+  const counts = {
+    bookings: bookings.tripId === trip.id && bookings.items.length > 0 ? t('bookings.count', { count: bookings.items.length }) : '',
+    itinerary: itinerary.tripId === trip.id && itinerary.items.length > 0 ? t('itinerary.tileCount', { count: itinerary.items.length }) : ''
+  };
   const dates = formatDateRange(trip.startDate, trip.endDate);
 
   const actions = [
@@ -216,7 +221,7 @@ export function TripDashboard({ id }) {
         />`}
 
       <ul class="tiles">
-        ${TILES.map(({ key, Icon, path, packing, spending: isSpending, notes: isNotes }) => path
+        ${TILES.map(({ key, Icon, path, packing, spending: isSpending, notes: isNotes, count }) => path
           ? html`
             <li key=${key}>
               <a class="tile is-link" href=${path(trip.id)}>
@@ -228,6 +233,7 @@ export function TripDashboard({ id }) {
                   </span>`}
                 ${isSpending && spentTotal > 0 && html`<span class="badge badge-soon">${formatMoney(spentTotal, 'EUR')}</span>`}
                 ${isNotes && noteCount > 0 && html`<span class="badge badge-soon">${t('notes.tileCount', { count: noteCount })}</span>`}
+                ${count && counts[count] && html`<span class="badge badge-soon">${counts[count]}</span>`}
               </a>
             </li>`
           : html`

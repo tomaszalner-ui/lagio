@@ -10,7 +10,7 @@ import { buildTimeline, dayProgress } from '../modules/itinerary.js';
 import { todayIso } from '../modules/trips.js';
 import { DocumentViewer } from './document-viewer.js';
 import { TypeIcon, timeLabels } from './booking-parts.js';
-import { ITEM_TYPE_INFO, mapLink, time } from './trip-itinerary.js';
+import { ITEM_TYPE_INFO, mapLink, time, ItemTime } from './trip-itinerary.js';
 import { PinIcon, TicketIcon } from './illustrations.js';
 
 // The time now as '14:05'
@@ -90,7 +90,7 @@ export function TodayCard({ trip, items, days, bookings, documents }) {
               const { Icon } = ITEM_TYPE_INFO[item.type] || ITEM_TYPE_INFO.activity;
               return html`
                 <li class=${rowClass(index)} key=${item.id}>
-                  ${timeCell(index, time(day.date, item.startTime))}
+                  ${timeCell(index, html`<${ItemTime} date=${day.date} item=${item} />`)}
                   <a class="today-main" href=${paths.tripItinerary(trip.id)}>
                     <span class="plan-icon is-own"><${Icon} /></span>
                     <span class="plan-text">

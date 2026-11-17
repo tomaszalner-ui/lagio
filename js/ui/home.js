@@ -2,17 +2,30 @@
 // "no dates yet" and "past", a New trip button, Import trip, and a link to
 // the archive.
 
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import { html } from './html.js';
 import { useStore } from '../store.js';
 import { t } from '../i18n.js';
 import { paths } from '../router.js';
 import { groupTrips, todayIso } from '../modules/trips.js';
+import { shouldShowNews, markNewsSeen } from '../modules/news.js';
 import { EmptyState } from './empty-state.js';
 import { ImportDialog } from './import-dialog.js';
-import { Suitcase, PlusIcon, ImportIcon } from './illustrations.js';
+import { Suitcase, PlusIcon, ImportIcon, StarIcon, CloseIcon } from './illustrations.js';
 import { TripCard } from './trip-card.js';
 import { APP_VERSION } from '../version.js';
+
+// After an update: a slim one-time strip "Lagio atnaujinta – kas naujo?"
+function NewsStrip({ onDismiss }) {
+  return html`
+    <div class="backup-strip news-strip" role="status">
+      <${StarIcon} />
+      <a class="backup-text news-strip-link" href=${paths.news()}>${t('news.updated', { version: APP_VERSION })}</a>
+      <button type="button" class="backup-close" aria-label=${t('common.close')} title=${t('common.close')} onClick=${onDismiss}>
+        <${CloseIcon} />
+      </button>
+    </div>`;
+}
 
 const IMPORT_INPUT_ID = 'trip-import-input';
 
@@ -39,6 +52,17 @@ export function Home() {
   const visible = trips.filter((trip) => !trip.archived);
   const archivedCount = trips.length - visible.length;
   const groups = groupTrips(visible, today);
+  const [showNews, setShowNews] = useState(false);
+
+  useEffect(() => {
+    shouldShowNews(trips.length > 0).then(setShowNews).catch((error) => console.error(error));
+  }, []);
+
+  function dismissNews() {
+    setShowNews(false);
+    markNewsSeen().catch((error) => console.error(error));
+  }
+  const newsStrip = showNews && html`<${NewsStrip} onDismiss=${dismissNews} />`;
 
   function onPickImport(event) {
     const file = event.currentTarget.files[0];
@@ -57,7 +81,9 @@ export function Home() {
       ${visible.length > 0 && importButton('button-small')}
       ${archivedCount > 0 && html`
         <a class="archive-link" href=${paths.archive()}>${t('home.archiveLink', { count: archivedCount })}</a>`}
-      <p class="app-version">${t('app.version', { version: APP_VERSION })}</p>
+      <p class="app-version">
+        ${t('app.version', { version: APP_VERSION })} · <a href=${paths.news()}>${t('news.link')}</a>
+      </p>
     </div>
     <input
       id=${IMPORT_INPUT_ID}
@@ -72,6 +98,7 @@ export function Home() {
     return html`
       <section class="screen">
         <h1 class="screen-title screen-head">${t('home.title')}</h1>
+        ${newsStrip}
         <${EmptyState}
           illustration=${html`<${Suitcase} />`}
           title=${t('home.emptyTitle')}
@@ -94,6 +121,7 @@ export function Home() {
           <${PlusIcon} /><span>${t('home.newTrip')}</span>
         </a>
       </div>
+      ${newsStrip}
       <${TripSection} title=${t('home.section.current')} trips=${groups.current} today=${today} />
       <${TripSection} title=${t('home.section.undated')} trips=${groups.undated} today=${today} />
       <${TripSection} title=${t('home.section.past')} trips=${groups.past} today=${today} />

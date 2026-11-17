@@ -2,6 +2,7 @@
 
 One line per version: date, version, what changed in plain words.
 
+- 2026-11-17 · 0.8.2 · "Kas naujo" in the app (link under the trip list, and a one-time strip after an update); tiles show the number of bookings and plan items; "Šiandien" shows end times and (+1); long trip names stay on one line at the top; the trip currency hint now says what it is for.
 - 2026-11-17 · 0.8.1 · Password lock: an exported trip file can be locked with a password (typed twice, at least 8 characters); the file name ends "-uzrakinta"; Lagio asks for the password when importing it. Unlocked export works as before.
 - 2026-11-17 · 0.8.0 · Notes: keep addresses, phrases, contacts and codes per trip; they save by themselves while you type; phone numbers, e-mails and web addresses can be tapped; copy a note or show it in big letters. Duplicating a trip copies its notes.
 - 2026-11-17 · 0.7.1 · Spending: euro amounts fill in from the day's exchange rate (ECB, kept for offline use; you can type your bank's amount instead); booking prices in other currencies now count; trip budget with optional amounts per category; who paid how much; a spending summary on the trip screen after the trip. "Šiandien" marks the next entry (Kitas) and dims what is over; plan items can end after midnight (23:00–00:30 (+1)).

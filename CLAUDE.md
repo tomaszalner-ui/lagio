@@ -51,6 +51,7 @@ When adding a file the app loads, run `node tools/update-sw.mjs` (rewrites the `
 - For every feature: agree the scope, then data, module logic, screen, LT and EN text, export support, written test cases.
 - Before every commit: works offline, no hard-coded text, Lithuanian checked, export then import loses nothing, 360 px layout, no console errors, data from the previous version still opens.
 - Commit messages: one line in English saying what the user gets.
+- Every release the user can notice gets a "Kas naujo" entry: add `{ version, date }` at the top of `NEWS` in `js/modules/news.js` and the text `news.v<version>` (dots → underscores) in both lang files. check.mjs fails if a listed version has no text.
 
 ## Decisions
 Technical decisions made while building (the full list is in the plan doc and the `lagio-core` skill).
@@ -82,6 +83,7 @@ Technical decisions made while building (the full list is in the plan doc and th
 | Spending | Expenses store amount + currency + amountEur + rateUsed (+ rateSource, rateDate, paidBy); totals always EUR. Categories: transport, accommodation, food, activities, shopping, other. Booking prices count automatically; other currencies get `priceEur` (+ priceRate, priceRateDate) at the rate of the start day, cleared on every booking save so it is converted again. Budget: `trip.budget` { total, byCategory } in euro cents, total empty = categories added up; duplicates copy it. "Kas mokėjo" = expenses only. After the trip the stage card shows the summary |
 | Exchange rates | `js/rates.js` is the only network call: `api.frankfurter.dev/v1/<date or latest>?from=XXX&to=EUR` (ECB; future days use latest). Every rate saved in setting `rates` for offline use; offline falls back to the newest saved rate of that currency ("Išsaugotas kursas"), else the user types the euro amount. Typing the euro amount makes it manual; clearing it brings the rate back. check.mjs allows the line marked "allowed network call" only in rates.js |
 | Notes | `note { title, body }`, plain text; list sorted by last change. Saves by itself 600 ms after typing, on Baigti, on leaving the screen and when the app goes to the background; an empty note is never saved and an emptied one is deleted (Undo). Viewing: phone numbers (+… or 0/8…, 8+ digits), e-mails and web addresses are links (`linkParts`); Kopijuoti; Dideliu šriftu (full-screen). Pinning notes: later |
+| Kas naujo | `#/news` lists versions from `NEWS` (newest first; older milestones grouped as 0.1–0.6), texts in lang files. Home shows a one-time strip after an update (setting `newsSeen` ≠ app version and the version has news); tapping it, opening the list or ✕ marks it seen. A fresh install with no trips is marked seen silently. Footer: "Lagio x.y.z · Kas naujo" |
 | Booking types | flight, train, bus, ferry, car, stay, event, other; start/end labels follow the type. Address opens a Google Maps search link (tapped by the user, not fetched) |
 
 ## Build order (phase 1)

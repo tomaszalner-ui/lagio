@@ -43,6 +43,13 @@ export const mapLink = (address) => 'https://www.google.com/maps/search/?api=1&q
 
 export const time = (date, value) => (value ? formatTime(`${date}T${value}`) : '');
 
+// A plan item's time: "09:00", "09:00–11:30" or "23:00–00:30 (+1)"
+// (also used by the "Šiandien" card)
+export function ItemTime({ date, item }) {
+  const range = item.endTime ? `${time(date, item.startTime)}–${time(date, item.endTime)}` : time(date, item.startTime);
+  return html`${range}${endsNextDay(item) && html` <span class="next-day" title=${t('itinerary.endsNextDay')}>${t('itinerary.nextDayMark')}</span>`}`;
+}
+
 // The add / edit box for one plan item
 function ItemDialog({ trip, item, date, onClose }) {
   const [values, setValues] = useState(() => item
@@ -169,14 +176,9 @@ function Entry({ trip, entry, date, onEditItem, move = null }) {
   }
   const { item } = entry;
   const { Icon } = ITEM_TYPE_INFO[item.type] || ITEM_TYPE_INFO.activity;
-  const range = item.endTime ? `${time(date, item.startTime)}–${time(date, item.endTime)}` : time(date, item.startTime);
-  const nextDay = endsNextDay(item); // 23:00–00:30 (+1)
   return html`
     <li class="plan-entry">
-      <span class="plan-time">
-        ${range}
-        ${nextDay && html` <span class="next-day" title=${t('itinerary.endsNextDay')}>${t('itinerary.nextDayMark')}</span>`}
-      </span>
+      <span class="plan-time"><${ItemTime} date=${date} item=${item} /></span>
       <button type="button" class="plan-main" onClick=${() => onEditItem(item)}>
         <span class="plan-icon is-own"><${Icon} /></span>
         <span class="plan-text">

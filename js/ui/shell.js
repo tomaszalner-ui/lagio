@@ -22,6 +22,7 @@ import { TripPacking } from './trip-packing.js';
 import { TripItinerary } from './trip-itinerary.js';
 import { TripSpending } from './trip-spending.js';
 import { TripNotes, NoteScreen } from './trip-notes.js';
+import { WhatsNew } from './whats-new.js';
 import { BookingForm } from './booking-form.js';
 import { BookingDetail } from './booking-detail.js';
 
@@ -41,6 +42,7 @@ function StartupError() {
 function Screen({ route }) {
   switch (route.name) {
     case 'archive': return html`<${Archive} />`;
+    case 'news': return html`<${WhatsNew} />`;
     case 'tripNew': return html`<${TripForm} />`;
     // key: a different trip gets a fresh form instead of reusing the old one
     case 'tripEdit': return html`<${TripForm} id=${route.params.id} key=${'edit-' + route.params.id} />`;

@@ -71,6 +71,13 @@ for (const file of jsFiles) {
     }
   }
 }
+// "Kas naujo": every version in js/modules/news.js needs its text
+// news.v<version> (dots -> underscores); those keys count as used
+for (const match of read('js/modules/news.js').matchAll(/version: '([\d.]+)'/g)) {
+  const key = 'news.v' + match[1].replace(/\./g, '_');
+  usedKeys.add(key);
+  if (!allKeys.has(key)) problems.push(`js/modules/news.js: version ${match[1]} has no text "${key}" in the language files`);
+}
 for (const key of allKeys) {
   if (!usedKeys.has(key)) warnings.push(`Key "${key}" is not used in the code (fine if it is planned)`);
 }
