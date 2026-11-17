@@ -15,3 +15,12 @@
 | 7 | Edit a trip → Valiuta. | Hint: "Naujų išlaidų valiuta pagal nutylėjimą. Sumos ir biudžetas skaičiuojami eurais." | ✔ |
 | 8 | EN. | "What's new", "Version 0.8.2", English texts; tiles "2 bookings", "3 items". | ✔ |
 | 9 | Phone: after this update arrives, open Lagio. | The strip appears once; Kas naujo reads well. | Phone |
+
+## Fix 0.8.3: the strip stays after "Kas naujo"
+
+Reported on the phone with 0.8.2: after reading Kas naujo and going back, the strip was still on Home. Not reproduced in headless Edge; most likely Home re-read the setting before the save had finished. Now the "seen" state is kept in memory at once, and tapping the strip hides it immediately.
+
+| # | Steps | Expected | Result |
+| --- | --- | --- | --- |
+| 1 | Production mode ([::1]), a trip, last seen 0.8.2. Tap the strip and go Back at once; the footer link and Back; ✕; reload. | The strip shows once ("Lagio 0.8.3"), then never again after any of these. Kas naujo starts with the 0.8.3 fix. | ✔ |
+| 2 | Phone: after this update, tap the strip, read, go back; close and reopen Lagio. | The strip is gone and stays gone. | Phone |

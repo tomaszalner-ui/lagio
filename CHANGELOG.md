@@ -2,6 +2,7 @@
 
 One line per version: date, version, what changed in plain words.
 
+- 2026-11-17 · 0.8.3 · Fix: the "Lagio atnaujinta" strip on Home disappears as soon as it is tapped or "Kas naujo" is opened (it is remembered at once, not only after saving).
 - 2026-11-17 · 0.8.2 · "Kas naujo" in the app (link under the trip list, and a one-time strip after an update); tiles show the number of bookings and plan items; "Šiandien" shows end times and (+1); long trip names stay on one line at the top; the trip currency hint now says what it is for.
 - 2026-11-17 · 0.8.1 · Password lock: an exported trip file can be locked with a password (typed twice, at least 8 characters); the file name ends "-uzrakinta"; Lagio asks for the password when importing it. Unlocked export works as before.
 - 2026-11-17 · 0.8.0 · Notes: keep addresses, phrases, contacts and codes per trip; they save by themselves while you type; phone numbers, e-mails and web addresses can be tapped; copy a note or show it in big letters. Duplicating a trip copies its notes.

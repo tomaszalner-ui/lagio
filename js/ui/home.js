@@ -20,7 +20,7 @@ function NewsStrip({ onDismiss }) {
   return html`
     <div class="backup-strip news-strip" role="status">
       <${StarIcon} />
-      <a class="backup-text news-strip-link" href=${paths.news()}>${t('news.updated', { version: APP_VERSION })}</a>
+      <a class="backup-text news-strip-link" href=${paths.news()} onClick=${onDismiss}>${t('news.updated', { version: APP_VERSION })}</a>
       <button type="button" class="backup-close" aria-label=${t('common.close')} title=${t('common.close')} onClick=${onDismiss}>
         <${CloseIcon} />
       </button>

@@ -420,6 +420,7 @@
   "news.link": "What's new",
   "news.updated": "Lagio was updated to {version} – what's new?",
   "news.versionLabel": "Version {version}",
+  "news.v0_8_3": "Fixed: the \"Lagio was updated\" strip disappears as soon as you tap it or open \"What's new\".",
   "news.v0_8_2": "This \"What's new\" list. Long trip names are shortened at the top, the tiles show how many bookings and plan items there are, and \"Today\" shows end times too.",
   "news.v0_8_1": "A trip file can be locked with a password. Lagio asks for it when importing.",
   "news.v0_8_0": "Notes: addresses, phrases, contacts. They save by themselves; phone numbers and links can be tapped; copy a note or show it in big letters.",

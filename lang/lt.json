@@ -432,6 +432,7 @@
   "news.link": "Kas naujo",
   "news.updated": "Lagio atnaujinta į {version} – kas naujo?",
   "news.versionLabel": "Versija {version}",
+  "news.v0_8_3": "Pataisyta: juosta „Lagio atnaujinta“ dingsta, kai tik ją paliečiate arba peržiūrite „Kas naujo“.",
   "news.v0_8_2": "Šis sąrašas „Kas naujo“. Ilgi kelionių pavadinimai viršuje sutrumpinami, plytelėse matyti rezervacijų ir plano įrašų skaičius, „Šiandien“ rodo ir pabaigos laiką.",
   "news.v0_8_1": "Kelionės failą galima užrakinti slaptažodžiu. Importuojant Lagio jo paklausia.",
   "news.v0_8_0": "Užrašai: adresai, frazės, kontaktai. Išsaugomi patys; telefono numerius ir nuorodas galima paliesti, užrašą – nukopijuoti arba parodyti dideliu šriftu.",
