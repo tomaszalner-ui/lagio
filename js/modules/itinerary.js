@@ -28,8 +28,13 @@ export function validateItem(input) {
   if (!ISO_DATE.test(input.date || '')) errors.date = 'required';
   if (input.startTime && !TIME.test(input.startTime)) errors.startTime = 'invalid';
   if (input.endTime && !input.startTime) errors.startTime = 'requiredWithEnd';
-  else if (input.endTime && input.endTime < input.startTime) errors.endTime = 'beforeStart';
+  // An end earlier than the start is fine: it means the next day (23:00–00:30)
   return errors;
+}
+
+// True when a plan item ends after midnight (end time earlier than the start)
+export function endsNextDay(item) {
+  return Boolean(item.startTime && item.endTime && item.endTime < item.startTime);
 }
 
 function cleanItem(input) {
@@ -152,6 +157,36 @@ function entriesFor(date, items, bookings) {
     if (b.time) return 1;
     return rank(a) - rank(b) || ((a.item && a.item.order) || 0) - ((b.item && b.item.order) || 0);
   });
+}
+
+// When an entry is over on its day: a time, 'later' (goes on past midnight)
+// or null (no end of its own: it lasts until the next entry starts)
+function entryEnd(entry, date) {
+  if (entry.kind === 'item') {
+    if (!entry.item.endTime) return null;
+    return endsNextDay(entry.item) ? 'later' : entry.item.endTime;
+  }
+  if (entry.role === 'end') return null; // arrival, check-out: a moment
+  const [endDate, endTime] = splitDateTime(entry.booking.endAt);
+  if (endDate === date && endTime) return endTime; // e.g. a concert 19:00–22:00
+  if (endDate > date && !SHOWS_END.includes(entry.booking.type)) return 'later';
+  return null; // departure, check-in: a moment
+}
+
+// Today's progress for the "Šiandien" card. now = the time now ('14:05').
+// Returns one status per entry: 'ended', 'next' (the first entry still to
+// start) or '' (going on now, or without a time).
+export function dayProgress(entries, date, now) {
+  const timed = entries.filter((entry) => entry.time);
+  const statuses = new Map();
+  timed.forEach((entry, index) => {
+    let end = entryEnd(entry, date);
+    if (end === null) end = (timed.slice(index + 1).find((other) => other.time > entry.time) || {}).time || 'later';
+    if (end !== 'later' && end <= now) statuses.set(entry, 'ended');
+  });
+  const next = timed.find((entry) => entry.time > now);
+  if (next) statuses.set(next, 'next');
+  return entries.map((entry) => statuses.get(entry) || '');
 }
 
 // The whole plan:

@@ -311,7 +311,6 @@
   "itinerary.error.titleRequired": "Įrašykite pavadinimą.",
   "itinerary.error.dateRequired": "Pasirinkite dieną.",
   "itinerary.error.startRequired": "Nurodykite ir pradžios laiką.",
-  "itinerary.error.endBeforeStart": "Pabaiga negali būti anksčiau už pradžią.",
   "toast.planItemDeleted": "Įrašas ištrintas",
 
   "itinerary.dayTitle": "Dienos pavadinimas",
@@ -382,6 +381,10 @@
   "toast.budgetRemoved": "Biudžetas pašalintas",
   "dashboard.perDay": "≈ {amount} per dieną",
   "dashboard.allSpending": "Visos išlaidos",
+
+  "today.next": "Kitas",
+  "itinerary.endsNextDay": "Baigiasi kitą dieną",
+  "itinerary.nextDayMark": "(+1)",
 
   "delete.title": "Ištrinti kelionę?",
   "delete.text": "Kelionė „{name}“ ir visa jos informacija bus ištrinta. Iškart po to dar galėsite tai atšaukti.",

@@ -37,3 +37,16 @@ Phone test by the owner on 2026-11-17 (versions 0.6.0–0.6.1): bookings on thei
 | 9 | Phone: on a real travel day, open the trip and tap the ticket. | One tap from the trip to the boarding pass. | Phone |
 
 Phone test by the owner on 2026-11-17 (version 0.6.2): "Šiandien" with one-tap tickets, day titles and reordering work.
+
+## Fixes in 0.7.1: next entry on "Šiandien", plan items past midnight
+
+✔ = passed in headless Edge on 2026-11-17.
+
+| # | Steps | Expected | Result |
+| --- | --- | --- | --- |
+| 1 | Rule check for a day: train 08:00–09:30, museum 10:00–12:00, lunch 12:30 (no end), concert 19:00–22:00, night tour 23:00–00:30, one item without a time; at 07:00, 09:00, 11:00, 12:45, 19:30, 22:30, 23:59. | "Next" = the first entry still to start (train, museum, lunch, concert, night tour, night tour, none). Ended = its end time has passed; without an end time, once the next entry has started; the night tour never ends that day; the item without a time is never marked. | ✔ |
+| 2 | A trip happening today with entries 2 h ago (1 h long), 30 min ago (1 h long), in 1 minute, in 1,5 h. Open the trip. | The first is dimmed; the second (going on now) looks normal; the third has the **Kitas** label, a blue bar and bold title; the last is normal. 360 px, no sideways scrolling. | ✔ |
+| 3 | Wait until the third has started, then bring the app back to the front. | **Kitas** moves to the last entry, without reloading. | ✔ |
+| 4 | Plan item 23:00–00:30; edit it to 22:30–01:15. | Accepted (no error); the form says "Baigiasi kitą dieną"; the plan shows "22:30–01:15 (+1)". An end time without a start time is still an error. | ✔ |
+| 5 | EN; network off; export, delete, import. | "Next", "(+1)" with the tip "Ends the next day"; the card and the plan work offline; items come back with the same times. | ✔ |
+| 6 | Phone: open the trip during the day, switch to another app for a while, come back. | The label has moved on to the right entry. | Phone |

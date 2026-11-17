@@ -11,7 +11,7 @@ import { paths } from '../router.js';
 import { todayIso } from '../modules/trips.js';
 import {
   ITEM_TYPES, validateItem, createItem, updateItem, deleteItem, undoDeleteItem, buildTimeline,
-  setDayTitle, moveUntimed
+  setDayTitle, moveUntimed, endsNextDay
 } from '../modules/itinerary.js';
 import { Field } from './field.js';
 import { EmptyState } from './empty-state.js';
@@ -35,8 +35,7 @@ export const ITEM_TYPE_INFO = {
 const ERROR_TEXT = {
   title: { required: 'itinerary.error.titleRequired' },
   date: { required: 'itinerary.error.dateRequired' },
-  startTime: { requiredWithEnd: 'itinerary.error.startRequired', invalid: 'itinerary.error.startRequired' },
-  endTime: { beforeStart: 'itinerary.error.endBeforeStart' }
+  startTime: { requiredWithEnd: 'itinerary.error.startRequired', invalid: 'itinerary.error.startRequired' }
 };
 
 // A map search for the address: a link the user taps, not a call by Lagio
@@ -125,7 +124,8 @@ function ItemDialog({ trip, item, date, onClose }) {
             <input id="plan-start" class="input" type="time" value=${values.startTime}
               onInput=${(event) => set('startTime', event.currentTarget.value)} />
           <//>
-          <${Field} id="plan-end" label=${t('itinerary.field.to')} error=${errorText('endTime')}>
+          <${Field} id="plan-end" label=${t('itinerary.field.to')}
+            hint=${endsNextDay(values) ? t('itinerary.endsNextDay') : ''}>
             <input id="plan-end" class="input" type="time" value=${values.endTime} disabled=${!values.startTime}
               onInput=${(event) => set('endTime', event.currentTarget.value)} />
           <//>
@@ -170,9 +170,13 @@ function Entry({ trip, entry, date, onEditItem, move = null }) {
   const { item } = entry;
   const { Icon } = ITEM_TYPE_INFO[item.type] || ITEM_TYPE_INFO.activity;
   const range = item.endTime ? `${time(date, item.startTime)}–${time(date, item.endTime)}` : time(date, item.startTime);
+  const nextDay = endsNextDay(item); // 23:00–00:30 (+1)
   return html`
     <li class="plan-entry">
-      <span class="plan-time">${range}</span>
+      <span class="plan-time">
+        ${range}
+        ${nextDay && html` <span class="next-day" title=${t('itinerary.endsNextDay')}>${t('itinerary.nextDayMark')}</span>`}
+      </span>
       <button type="button" class="plan-main" onClick=${() => onEditItem(item)}>
         <span class="plan-icon is-own"><${Icon} /></span>
         <span class="plan-text">

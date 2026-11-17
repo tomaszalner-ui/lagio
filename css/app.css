@@ -2182,3 +2182,37 @@ textarea {
   justify-self: start;
   margin-top: 8px;
 }
+
+/* ---------- Today: next and ended entries; plan items past midnight ---------- */
+.today-entry.is-next {
+  background: var(--color-primary-soft);
+  box-shadow: inset 4px 0 0 var(--color-primary);
+}
+
+.today-entry.is-next .plan-title {
+  font-weight: 700;
+}
+
+.today-entry.is-ended .plan-time,
+.today-entry.is-ended .today-main {
+  opacity: 0.5;
+}
+
+.next-label {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.next-day {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-muted);
+  white-space: nowrap;
+}

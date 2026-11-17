@@ -2,22 +2,51 @@
 // today's timeline (bookings and plan items) with a one-tap "Ticket" button
 // for bookings that have a file attached, and a link to the whole plan.
 
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import { html } from './html.js';
 import { t } from '../i18n.js';
 import { paths } from '../router.js';
-import { buildTimeline } from '../modules/itinerary.js';
+import { buildTimeline, dayProgress } from '../modules/itinerary.js';
 import { todayIso } from '../modules/trips.js';
 import { DocumentViewer } from './document-viewer.js';
 import { TypeIcon, timeLabels } from './booking-parts.js';
 import { ITEM_TYPE_INFO, mapLink, time } from './trip-itinerary.js';
 import { PinIcon, TicketIcon } from './illustrations.js';
 
+// The time now as '14:05'
+const clock = (date) => String(date.getHours()).padStart(2, '0') + ':' + String(date.getMinutes()).padStart(2, '0');
+
+// The next entry gets a "Kitas" label; entries that are over are dimmed.
+// The clock is read when the card opens and whenever the app comes back
+// to the front (a phone app is often left open in the background).
 export function TodayCard({ trip, items, days, bookings, documents }) {
   const [viewing, setViewing] = useState(null);
-  const today = todayIso();
+  const [now, setNow] = useState(() => new Date());
+
+  useEffect(() => {
+    const refresh = () => {
+      if (document.visibilityState === 'visible') setNow(new Date());
+    };
+    document.addEventListener('visibilitychange', refresh);
+    window.addEventListener('focus', refresh);
+    window.addEventListener('pageshow', refresh);
+    return () => {
+      document.removeEventListener('visibilitychange', refresh);
+      window.removeEventListener('focus', refresh);
+      window.removeEventListener('pageshow', refresh);
+    };
+  }, []);
+
+  const today = todayIso(now);
   const day = buildTimeline(trip, items, bookings, days).days.find((d) => d.date === today);
   if (!day) return null;
+  const statuses = dayProgress(day.entries, day.date, clock(now));
+  const rowClass = (index) => 'today-entry' + (statuses[index] ? ' is-' + statuses[index] : '');
+  const timeCell = (index, text) => html`
+    <span class="plan-time">
+      ${text}
+      ${statuses[index] === 'next' && html`<span class="next-label">${t('today.next')}</span>`}
+    </span>`;
 
   // A booking's files: one opens straight away, several -> the booking screen
   const filesOf = (booking) => documents.filter((doc) => doc.bookingId === booking.id);
@@ -32,14 +61,14 @@ export function TodayCard({ trip, items, days, bookings, documents }) {
       ${day.entries.length === 0
         ? html`<p class="today-empty">${t('today.empty')}</p>`
         : html`<ul class="today-list">
-            ${day.entries.map((entry) => {
+            ${day.entries.map((entry, index) => {
               if (entry.kind === 'booking') {
                 const { booking, role } = entry;
                 const files = filesOf(booking);
                 const labels = timeLabels(booking.type);
                 return html`
-                  <li class="today-entry" key=${booking.id + role}>
-                    <span class="plan-time">${time(day.date, entry.time)}</span>
+                  <li class=${rowClass(index)} key=${booking.id + role}>
+                    ${timeCell(index, time(day.date, entry.time))}
                     <a class="today-main" href=${paths.booking(trip.id, booking.id)}>
                       <span class="plan-icon"><${TypeIcon} type=${booking.type} /></span>
                       <span class="plan-text">
@@ -60,8 +89,8 @@ export function TodayCard({ trip, items, days, bookings, documents }) {
               const { item } = entry;
               const { Icon } = ITEM_TYPE_INFO[item.type] || ITEM_TYPE_INFO.activity;
               return html`
-                <li class="today-entry" key=${item.id}>
-                  <span class="plan-time">${time(day.date, item.startTime)}</span>
+                <li class=${rowClass(index)} key=${item.id}>
+                  ${timeCell(index, time(day.date, item.startTime))}
                   <a class="today-main" href=${paths.tripItinerary(trip.id)}>
                     <span class="plan-icon is-own"><${Icon} /></span>
                     <span class="plan-text">

@@ -299,7 +299,6 @@
   "itinerary.error.titleRequired": "Enter a title.",
   "itinerary.error.dateRequired": "Choose a day.",
   "itinerary.error.startRequired": "Add a start time too.",
-  "itinerary.error.endBeforeStart": "The end can’t be before the start.",
   "toast.planItemDeleted": "Item deleted",
 
   "itinerary.dayTitle": "Day title",
@@ -370,6 +369,10 @@
   "toast.budgetRemoved": "Budget removed",
   "dashboard.perDay": "≈ {amount} per day",
   "dashboard.allSpending": "All spending",
+
+  "today.next": "Next",
+  "itinerary.endsNextDay": "Ends the next day",
+  "itinerary.nextDayMark": "(+1)",
 
   "delete.title": "Delete this trip?",
   "delete.text": "“{name}” and everything in it will be deleted. You can still undo this right after.",
