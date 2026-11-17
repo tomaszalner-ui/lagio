@@ -12,9 +12,11 @@ import {
   list, get, getSetting, setSetting, newId, importBundle, requestPersistentStorage
 } from './db.js';
 import { APP_VERSION } from './version.js';
+import { isLocked, lock, unlock, LockError } from './crypto.js';
 
 export const FORMAT_VERSION = 1;
 export const FILE_EXTENSION = '.lagio';
+const LOCKED_SUFFIX = '-uzrakinta'; // 'Roma-2026-12-20-uzrakinta.lagio'
 
 // Every store that holds a trip's data. tools/check.mjs makes sure each
 // store in db.js is either listed here or is 'files' / 'settings'.
@@ -84,6 +86,14 @@ export async function exportTrip(tripId) {
   return new File([blob], exportFileName(trip), { type: 'application/zip' });
 }
 
+// Locks an exported trip file with a password (see crypto.js). The name
+// gets "-uzrakinta", so it is clear which file needs a password.
+export async function lockTripFile(file, password) {
+  const locked = await lock(file, password);
+  const name = file.name.replace(new RegExp(FILE_EXTENSION.replace('.', '\\.') + '$'), LOCKED_SUFFIX + FILE_EXTENSION);
+  return new File([locked], name, { type: 'application/octet-stream' });
+}
+
 // ---------- import: reading and checking a file ----------
 // Nothing is written to the database until readTripFile() has checked the
 // whole file. A broken or hostile file cannot fill the phone: sizes are
@@ -97,7 +107,8 @@ export const LIMITS = {
 };
 
 // Problems are reported with a code the screen turns into text:
-//   tooLarge, noSpace, notTripFile, newerVersion, damaged
+//   tooLarge, noSpace, notTripFile, newerVersion, damaged,
+//   locked (a password is needed), wrongPassword
 export class TripFileError extends Error {
   constructor(code, detail = '') {
     super(code + (detail ? ': ' + detail : ''));
@@ -198,10 +209,23 @@ function checkManifest(manifest) {
 }
 
 // Reads and checks a .lagio file. Returns a "bundle" for the summary and
-// for importTrip(), or throws TripFileError.
-export async function readTripFile(file) {
+// for importTrip(), or throws TripFileError. A locked file needs
+// { password }; without it the error is 'locked'.
+export async function readTripFile(file, { password } = {}) {
   if (file.size > LIMITS.file) throw new TripFileError('tooLarge');
   await checkFreeSpace(file.size);
+
+  if (await isLocked(file)) {
+    if (!password) throw new TripFileError('locked');
+    try {
+      file = await unlock(file, password);
+    } catch (error) {
+      if (error instanceof LockError) {
+        throw new TripFileError(error.code === 'wrongPassword' ? 'wrongPassword' : 'damaged', error.message);
+      }
+      throw error;
+    }
+  }
 
   const { default: JSZip } = await import('jszip');
   let zip;

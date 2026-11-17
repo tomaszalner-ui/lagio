@@ -2358,3 +2358,38 @@ textarea {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+/* ---------- password lock (export-dialog.js, import-dialog.js) ---------- */
+.link-button {
+  min-height: var(--tap);
+  margin-top: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-primary);
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.password-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.password-row .input {
+  flex: 1;
+  min-width: 0;
+}
+
+.password-toggle {
+  color: var(--color-primary);
+}
+
+.password-spacer {
+  flex: none;
+  width: var(--tap);
+}

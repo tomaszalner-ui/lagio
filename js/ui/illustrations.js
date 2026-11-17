@@ -56,6 +56,8 @@ export const BedIcon = () => html`<${Icon} d="M3 19V6M3 14h18v5M21 14a3 3 0 0 0-
 export const StarIcon = () => html`<${Icon} d="M12 3l2.6 5.5 6 .7-4.4 4.1 1.2 6-5.4-3-5.4 3 1.2-6L3.4 9.2l6-.7z" />`;
 export const PinIcon = () => html`<${Icon} d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21zM12 9.5h.01" />`;
 export const ExpandIcon = () => html`<${Icon} d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />`;
+export const EyeIcon = () => html`<${Icon} d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" />`;
+export const EyeOffIcon = () => html`<${Icon} d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.7 8.4 2 12 2 12s3.5 7 10 7c1.6 0 3-.4 4.3-1M9.9 9.9a3 3 0 0 0 4.2 4.2" />`;
 export const CopyIcon = () => html`<${Icon} d="M9 9h10v12H9zM5 15V3h10v2" />`;
 export const PaperclipIcon = () => html`<${Icon} d="M20 11.5l-8.2 8.2a5 5 0 0 1-7.1-7.1l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8" />`;
 export const FileIcon = () => html`<${Icon} d="M6 3h9l4 4v14H6zM15 3v4h4" />`;

@@ -9,7 +9,9 @@ import { t, formatDateRange, formatFileSize, formatTimestamp } from '../i18n.js'
 import { navigate, paths } from '../router.js';
 import { readTripFile, importStatus, importTrip, TripFileError } from '../transfer.js';
 import { Modal } from './dialog.js';
+import { Field } from './field.js';
 import { showToast } from './toast.js';
+import { PasswordInput } from './export-dialog.js';
 
 // Problem code from transfer.js -> text key
 const ERROR_TEXT = {
@@ -30,24 +32,57 @@ function errorMessage(error) {
   return t('import.error.failed');
 }
 
+// The password step for a locked file
+function PasswordStep({ wrong, busy, onUnlock, onCancel }) {
+  const [password, setPassword] = useState('');
+  const [shown, setShown] = useState(false);
+  const latest = useRef('');
+  return html`
+    <form class="form" noValidate onSubmit=${(event) => { event.preventDefault(); if (latest.current) onUnlock(latest.current); }}>
+      <p class="modal-text">${t('import.lockedText')}</p>
+      <${Field} id="unlock-password" label=${t('lock.password')} error=${wrong ? t('import.error.wrongPassword') : ''}>
+        <${PasswordInput} id="unlock-password" value=${password} shown=${shown} onToggle=${() => setShown(!shown)}
+          autocomplete="current-password"
+          onInput=${(value) => { latest.current = value; setPassword(value); }} />
+      <//>
+      ${busy && html`<p class="modal-text" role="status">${t('import.unlocking')}</p>`}
+      <div class="modal-buttons">
+        <button type="button" class="button" disabled=${busy} onClick=${onCancel}>${t('common.cancel')}</button>
+        <button type="submit" class="button button-primary" disabled=${busy}>${t('import.unlock')}</button>
+      </div>
+    </form>`;
+}
+
 export function ImportDialog({ file, onClose }) {
-  // reading -> ready -> saving, or failed
+  // reading -> ready -> saving, or failed; a locked file first: password -> unlocking
   const [state, setState] = useState({ status: 'reading' });
   const titleId = useRef('import-title').current;
+  const closed = useRef(false);
+
+  // Reads and checks the file (with the password for a locked one)
+  async function read(password) {
+    try {
+      const bundle = await readTripFile(file, { password });
+      const exists = (await importStatus(bundle)) === 'exists';
+      if (!closed.current) setState({ status: 'ready', bundle, exists });
+    } catch (error) {
+      if (closed.current) return;
+      if (error instanceof TripFileError && error.code === 'locked') setState({ status: 'password' });
+      else if (error instanceof TripFileError && error.code === 'wrongPassword') setState({ status: 'password', wrong: true });
+      else setState({ status: 'failed', message: errorMessage(error) });
+    }
+  }
 
   useEffect(() => {
-    let closed = false;
-    (async () => {
-      try {
-        const bundle = await readTripFile(file);
-        const exists = (await importStatus(bundle)) === 'exists';
-        if (!closed) setState({ status: 'ready', bundle, exists });
-      } catch (error) {
-        if (!closed) setState({ status: 'failed', message: errorMessage(error) });
-      }
-    })();
-    return () => { closed = true; };
+    closed.current = false;
+    read();
+    return () => { closed.current = true; };
   }, [file]);
+
+  function unlock(password) {
+    setState({ status: 'unlocking' });
+    read(password);
+  }
 
   async function save(mode) {
     const { bundle } = state;
@@ -66,7 +101,15 @@ export function ImportDialog({ file, onClose }) {
   }
 
   const { status, bundle, exists, message } = state;
-  const busy = status === 'saving';
+  const busy = status === 'saving' || status === 'unlocking';
+
+  if (status === 'password' || status === 'unlocking') {
+    return html`
+      <${Modal} open=${true} onClose=${busy ? () => {} : onClose} titleId=${titleId}>
+        <h2 class="modal-title" id=${titleId}>${t('import.lockedTitle')}</h2>
+        <${PasswordStep} wrong=${state.wrong} busy=${busy} onUnlock=${unlock} onCancel=${onClose} />
+      <//>`;
+  }
 
   let body;
   if (status === 'reading') {

@@ -56,3 +56,17 @@ Phone test by the owner on 2026-11-16 (version 0.4.1): export, import (file pick
 | 11 | Phone: is it noticeable but not annoying? | Owner's judgement. | Phone |
 
 Phone test by the owner on 2026-11-16 (version 0.4.2): the backup reminder works and is not annoying.
+
+## Step 8b: password lock (version 0.8.1)
+
+✔ = passed in headless Edge on 2026-11-17.
+
+| # | Steps | Expected | Result |
+| --- | --- | --- | --- |
+| 1 | Lock and unlock 9 MB (3 pieces) in code; wrong password; one changed byte in piece 2; the file cut short; a header asking for 999 999 999 rounds. | Same bytes back (≈0,2 s each way, +192 bytes); wrongPassword; damaged; damaged; damaged (refused before any work). | ✔ |
+| 2 | Trip ⋯ → **Eksportuoti kelionę** → **Užrakinti slaptažodžiu…**. | The warning "Be slaptažodžio failo neatidarys niekas, net Lagio…", two password boxes, "Bent 8 simboliai.", 👁 button. Unlocked export still works as before (two taps). | ✔ |
+| 3 | "trumpas"; then two different passwords; then 👁. | "Slaptažodis turi būti bent 8 simbolių."; "Slaptažodžiai nesutampa."; both boxes show the text, the button reads "Slėpti slaptažodį". | ✔ |
+| 4 | The same password twice → **Užrakinti** → **Atsisiųsti**. | "Užrakintas failas paruoštas", name ends "-uzrakinta.lagio", "Slaptažodį perduokite atskirai…"; counts as a backup. | ✔ |
+| 5 | Delete the trip; Home → **Importuoti kelionę** → the locked file; a wrong password (other capital letter); then the right one → **Importuoti**. | "Užrakintas failas · Šis kelionės failas užrakintas…"; "Neteisingas slaptažodis." and the box stays; then the usual summary; the trip and its 300 kB ticket come back byte for byte. | ✔ |
+| 6 | Network off: lock and unlock; EN; 360 px. | Works offline; "Lock with a password…", "Locked file · Unlock"; no sideways scrolling. | ✔ |
+| 7 | Phone: lock a trip, share it to yourself (Messenger / e-mail), open it in Lagio. | The password is asked, the trip comes back. | Phone |
