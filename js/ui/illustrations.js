@@ -34,6 +34,7 @@ export const ChevronUp = () => html`<${Icon} d="M6 15l6-6 6 6" />`;
 export const ChevronDown = () => html`<${Icon} d="M6 9l6 6 6-6" />`;
 export const PlusIcon = () => html`<${Icon} d="M12 5v14M5 12h14" />`;
 export const MinusIcon = () => html`<${Icon} d="M5 12h14" />`;
+export const BagIcon = () => html`<${Icon} d="M6 8h12l-1 12H7zM9 8V6a3 3 0 0 1 6 0v2" />`;
 export const FoodIcon = () => html`<${Icon} d="M7 3v8M5 3v4a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2 0-3.5 2-3.5 5.5S15 13 17 13" />`;
 export const TrashIcon = () => html`<${Icon} d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" />`;
 export const PencilIcon = () => html`<${Icon} d="M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4" />`;

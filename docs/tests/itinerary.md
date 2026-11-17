@@ -35,3 +35,5 @@ Phone test by the owner on 2026-11-17 (versions 0.6.0–0.6.1): bookings on thei
 | 7 | Move "Trevi fontanas" up; reload. | New order Kava, Trevi fontanas, Pantheonas — kept after reload. | ✔ |
 | 8 | Export; EN; 360 px; airplane mode. | Day titles are in the trip file; "Today · Day 4", "Tickets (2)"; no sideways scrolling; the card and the ticket work offline. | ✔ |
 | 9 | Phone: on a real travel day, open the trip and tap the ticket. | One tap from the trip to the boarding pass. | Phone |
+
+Phone test by the owner on 2026-11-17 (version 0.6.2): "Šiandien" with one-tap tickets, day titles and reordering work.

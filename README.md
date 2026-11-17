@@ -5,7 +5,7 @@ that runs in the phone's browser and can be installed like an app (PWA).
 Everything for a trip in one place: itinerary, bookings, ticket PDFs, packing list,
 spending and notes. All data stays on the device and works offline.
 
-Status: milestones 1–5 (Foundation, Trips, Bookings and documents, Trip file, Packing checklist) done; working on 6 (Itinerary).
+Status: milestones 1–6 (Foundation, Trips, Bookings and documents, Trip file, Packing checklist, Itinerary) done; working on 7 (Spending).
 
 ## Run it on your computer
 

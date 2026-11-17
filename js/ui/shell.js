@@ -20,6 +20,7 @@ import { TripDashboard } from './trip-dashboard.js';
 import { TripBookings } from './trip-bookings.js';
 import { TripPacking } from './trip-packing.js';
 import { TripItinerary } from './trip-itinerary.js';
+import { TripSpending } from './trip-spending.js';
 import { BookingForm } from './booking-form.js';
 import { BookingDetail } from './booking-detail.js';
 
@@ -43,6 +44,7 @@ function Screen({ route }) {
     // key: a different trip gets a fresh form instead of reusing the old one
     case 'tripEdit': return html`<${TripForm} id=${route.params.id} key=${'edit-' + route.params.id} />`;
     case 'trip': return html`<${TripDashboard} id=${route.params.id} key=${'trip-' + route.params.id} />`;
+    case 'tripSpending': return html`<${TripSpending} id=${route.params.id} key=${'spend-' + route.params.id} />`;
     case 'tripItinerary': return html`<${TripItinerary} id=${route.params.id} key=${'plan-' + route.params.id} />`;
     case 'tripPacking': return html`<${TripPacking} id=${route.params.id} key=${'packing-' + route.params.id} />`;
     case 'tripBookings': return html`<${TripBookings} id=${route.params.id} key=${'bookings-' + route.params.id} />`;

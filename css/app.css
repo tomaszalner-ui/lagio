@@ -1954,3 +1954,163 @@ textarea {
   font-weight: 600;
   text-decoration: none;
 }
+
+/* ---------- spending (trip-spending.js) ---------- */
+.spend-summary {
+  margin-bottom: 12px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.spend-label {
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+.spend-total {
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.spend-bars {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.spend-bar-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 8px;
+  align-items: center;
+}
+
+.spend-bar-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 14px;
+}
+
+.spend-bar-name .icon {
+  width: 16px;
+  height: 16px;
+  color: var(--color-primary);
+}
+
+.spend-bar-amount {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.spend-bar {
+  grid-column: 1 / -1;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--color-primary-soft);
+}
+
+.spend-bar span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--color-primary);
+}
+
+.spend-add {
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.spend-group {
+  margin-top: 8px;
+}
+
+.spend-day {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.spend-day-total {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.spend-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.spend-list li + li {
+  border-top: 1px solid var(--color-border);
+}
+
+.spend-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 56px;
+  padding: 8px 12px;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.spend-text {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+
+.spend-title {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.spend-sub {
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.spend-amount {
+  display: grid;
+  flex: none;
+  justify-items: end;
+  font-weight: 700;
+}
+
+.spend-eur {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+.type-picker-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.amount-row {
+  grid-template-columns: 1fr 1.3fr;
+}
+
+.input-amount {
+  font-size: 22px;
+  font-weight: 700;
+}

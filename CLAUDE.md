@@ -78,6 +78,7 @@ Technical decisions made while building (the full list is in the plan doc and th
 | Travelers | Optional `travelers: [{ id, name }]` on the trip; packing items point to one with `ownerId` (null = Bendri). Removing a traveler moves their items to Bendri. Traveler ids only matter inside one trip, so copies keep them. Templates and "already on the list" work per person |
 | Itinerary | Plan items store their own `date` (not a dayId), so they keep their real date when the trip's dates change; dates outside the trip show under "Kitos dienos". Day records only for day titles (6b). Bookings appear on the timeline automatically (start, and end for travel/stay/car); no `bookingId` on items. Types: activity, food, transport, note. Timed entries sorted by time; untimed get ↑↓ (6b) |
 | Today | During the trip (stage active) the dashboard shows a "Šiandien" card under the stage card: today's timeline; a booking with 1 file gets **Bilietas** (opens the viewer directly, no delete there), with more files a link to the booking |
+| Spending | Expenses store amount + currency + amountEur + rateUsed (+ rateSource, paidBy); totals always EUR. Categories: transport, accommodation, food, activities, shopping, other. Booking prices count automatically (EUR now; other currencies from 7b). Budget: one total, optional per category (7b). Rates: Frankfurter (ECB) — the one allowed network call (7b) |
 | Booking types | flight, train, bus, ferry, car, stay, event, other; start/end labels follow the type. Address opens a Google Maps search link (tapped by the user, not fetched) |
 
 ## Build order (phase 1)
@@ -86,8 +87,8 @@ Technical decisions made while building (the full list is in the plan doc and th
 3. Bookings and documents ✓ (0.3.3, phone-tested 16 Nov 2026)
 4. Trip file export/import ✓ (0.4.2, phone-tested 16 Nov 2026)
 5. Packing checklist ✓ (0.5.2, phone-tested 17 Nov 2026)
-6. Itinerary  ← current
-7. Spending
+6. Itinerary ✓ (0.6.2, phone-tested 17 Nov 2026)
+7. Spending  ← current
 8. Password lock, notes, polish
 9. Real test on the owner's own trip
 10. Testers

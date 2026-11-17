@@ -2,6 +2,7 @@
 
 One line per version: date, version, what changed in plain words.
 
+- 2026-11-17 · 0.7.0 · Spending: add expenses in any currency (euro amount typed for now), by category and day, with who paid; booking prices count automatically; totals in EUR, also on the trip screen.
 - 2026-11-17 · 0.6.2 · During the trip, the trip screen shows "Šiandien": today's plan with one-tap ticket buttons. Days can have a title (e.g. Florencija); items without a time can be moved up and down.
 - 2026-11-17 · 0.6.1 · The app version is shown in small grey text at the bottom of Home.
 - 2026-11-17 · 0.6.0 · Itinerary: a card per trip day with your bookings placed automatically (departure, check-in, check-out) and your own plan items (activity, food, transport, note) with time, address with a map pin, and note.

@@ -5,12 +5,13 @@
 
 import { useEffect, useState } from 'preact/hooks';
 import { html } from './html.js';
-import { useStore, reloadChecklist, reloadItinerary, reloadBookings, reloadDocuments } from '../store.js';
-import { t, formatDateRange, formatTimestamp } from '../i18n.js';
+import { useStore, reloadChecklist, reloadItinerary, reloadBookings, reloadDocuments, reloadSpending } from '../store.js';
+import { t, formatDateRange, formatTimestamp, formatMoney } from '../i18n.js';
 import { backupStatus, dismissBackupReminder } from '../transfer.js';
 import { navigate, paths } from '../router.js';
 import { getTripStage } from '../modules/trips.js';
 import { progress } from '../modules/checklist.js';
+import { summarize } from '../modules/spending.js';
 import {
   ChevronLeft, MoreIcon, TicketIcon, CalendarIcon, ChecklistIcon, WalletIcon, NoteIcon, ShieldIcon, CloseIcon
 } from './illustrations.js';
@@ -26,7 +27,7 @@ const TILES = [
   { key: 'dashboard.tiles.bookings', Icon: TicketIcon, path: paths.tripBookings },
   { key: 'dashboard.tiles.itinerary', Icon: CalendarIcon, path: paths.tripItinerary },
   { key: 'dashboard.tiles.packing', Icon: ChecklistIcon, path: paths.tripPacking, packing: true },
-  { key: 'dashboard.tiles.spending', Icon: WalletIcon },
+  { key: 'dashboard.tiles.spending', Icon: WalletIcon, path: paths.tripSpending, spending: true },
   { key: 'dashboard.tiles.notes', Icon: NoteIcon }
 ];
 
@@ -96,6 +97,7 @@ export function TripDashboard({ id }) {
   const itinerary = useStore((s) => s.itinerary);
   const bookings = useStore((s) => s.bookings);
   const documents = useStore((s) => s.documents);
+  const spending = useStore((s) => s.spending);
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -109,7 +111,7 @@ export function TripDashboard({ id }) {
 
   // The packing list's progress for its tile; today's plan during the trip
   useEffect(() => {
-    Promise.all([reloadChecklist(id), reloadItinerary(id), reloadBookings(id), reloadDocuments(id)])
+    Promise.all([reloadChecklist(id), reloadItinerary(id), reloadBookings(id), reloadDocuments(id), reloadSpending(id)])
       .catch((error) => console.error(error));
   }, [id]);
 
@@ -119,6 +121,8 @@ export function TripDashboard({ id }) {
   const places = trip.destinations.map((place) => place.name).join(', ');
   const packingItems = checklist.tripId === trip.id ? checklist.items : [];
   const { done: packingDone, total: packingTotal } = progress(packingItems);
+  const spentTotal = spending.tripId === trip.id && bookings.tripId === trip.id
+    ? summarize(spending.items, bookings.items).total : 0;
   const dates = formatDateRange(trip.startDate, trip.endDate);
 
   const actions = [
@@ -171,7 +175,7 @@ export function TripDashboard({ id }) {
         />`}
 
       <ul class="tiles">
-        ${TILES.map(({ key, Icon, path, packing }) => path
+        ${TILES.map(({ key, Icon, path, packing, spending: isSpending }) => path
           ? html`
             <li key=${key}>
               <a class="tile is-link" href=${path(trip.id)}>
@@ -181,6 +185,7 @@ export function TripDashboard({ id }) {
                   <span class=${'badge ' + (packingDone === packingTotal ? 'badge-active' : 'badge-soon')}>
                     ${t('packing.tileProgress', { done: String(packingDone), total: String(packingTotal) })}
                   </span>`}
+                ${isSpending && spentTotal > 0 && html`<span class="badge badge-soon">${formatMoney(spentTotal, 'EUR')}</span>`}
               </a>
             </li>`
           : html`
