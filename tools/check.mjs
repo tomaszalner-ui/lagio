@@ -191,8 +191,10 @@ for (const file of jsFiles) {
   if (file !== 'js/db.js' && /\bindexedDB\b|IDB[A-Z]\w+/.test(source)) {
     problems.push(`${file}: uses IndexedDB directly (only js/db.js may)`);
   }
-  // Lines marked "external link" are links the user taps, not calls by the app
-  for (const line of source.split('\n').filter((l) => !l.includes('external link'))) {
+  // Lines marked "external link" are links the user taps, not calls by the app.
+  // The exchange-rate address in js/rates.js is the one allowed network call.
+  const allowed = (l) => l.includes('external link') || (file === 'js/rates.js' && l.includes('allowed network call'));
+  for (const line of source.split('\n').filter((l) => !allowed(l))) {
     for (const match of line.matchAll(/https?:\/\/[^\s'"`)]+/g)) {
       warnings.push(`${file}: network address "${match[0]}". Only the exchange-rate fetch is allowed.`);
     }

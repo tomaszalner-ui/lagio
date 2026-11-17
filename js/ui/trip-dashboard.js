@@ -11,7 +11,8 @@ import { backupStatus, dismissBackupReminder } from '../transfer.js';
 import { navigate, paths } from '../router.js';
 import { getTripStage } from '../modules/trips.js';
 import { progress } from '../modules/checklist.js';
-import { summarize } from '../modules/spending.js';
+import { summarize, budgetUse, CATEGORIES } from '../modules/spending.js';
+import { CATEGORY_INFO, BudgetLine, convertBookingPrices } from './trip-spending.js';
 import {
   ChevronLeft, MoreIcon, TicketIcon, CalendarIcon, ChecklistIcon, WalletIcon, NoteIcon, ShieldIcon, CloseIcon
 } from './illustrations.js';
@@ -31,8 +32,38 @@ const TILES = [
   { key: 'dashboard.tiles.notes', Icon: NoteIcon }
 ];
 
-// The card under the header: what matters at this stage of the trip
-function StageCard({ trip }) {
+// After the trip: what it cost, per day, against the budget, and the
+// three biggest categories
+function SpendingRecap({ trip, summary, totalDays }) {
+  const use = trip.budget ? budgetUse(summary.total, trip.budget.total) : null;
+  const top = CATEGORIES
+    .filter((category) => summary.byCategory[category] > 0)
+    .sort((a, b) => summary.byCategory[b] - summary.byCategory[a])
+    .slice(0, 3);
+  return html`
+    <div class="recap">
+      <p class="stage-label">${t('spending.total')}</p>
+      <p class="recap-total">${formatMoney(summary.total, 'EUR')}</p>
+      ${totalDays > 1 && html`
+        <p class="stage-text">${t('dashboard.perDay', { amount: formatMoney(Math.round(summary.total / totalDays), 'EUR') })}</p>`}
+      ${use && html`<${BudgetLine} use=${use} />`}
+      <ul class="recap-list">
+        ${top.map((category) => {
+          const { key, Icon } = CATEGORY_INFO[category];
+          return html`
+            <li key=${category}>
+              <span class="spend-bar-name"><${Icon} />${t(key)}</span>
+              <span class="spend-bar-amount">${formatMoney(summary.byCategory[category], 'EUR')}</span>
+            </li>`;
+        })}
+      </ul>
+      <a class="button button-small" href=${paths.tripSpending(trip.id)}>${t('dashboard.allSpending')}</a>
+    </div>`;
+}
+
+// The card under the header: what matters at this stage of the trip.
+// spent: the spending summary (null while it loads)
+function StageCard({ trip, spent }) {
   const info = getTripStage(trip);
 
   if (info.stage === 'planning') {
@@ -62,7 +93,9 @@ function StageCard({ trip }) {
     return html`
       <div class="stage-card">
         <p class="stage-big">${t('dashboard.doneLabel')}</p>
-        <p class="stage-text">${t('dashboard.doneText')}</p>
+        ${spent && spent.total > 0
+          ? html`<${SpendingRecap} trip=${trip} summary=${spent} totalDays=${info.totalDays} />`
+          : html`<p class="stage-text">${t('dashboard.doneText')}</p>`}
       </div>`;
   }
 
@@ -115,14 +148,20 @@ export function TripDashboard({ id }) {
       .catch((error) => console.error(error));
   }, [id]);
 
+  // Booking prices in other currencies count once converted (needs internet)
+  useEffect(() => {
+    if (bookings.tripId === id) convertBookingPrices(id, bookings.items);
+  }, [id, bookings]);
+
   const trip = trips.find((item) => item.id === id);
   if (!trip) return html`<${NotFound} />`;
 
   const places = trip.destinations.map((place) => place.name).join(', ');
   const packingItems = checklist.tripId === trip.id ? checklist.items : [];
   const { done: packingDone, total: packingTotal } = progress(packingItems);
-  const spentTotal = spending.tripId === trip.id && bookings.tripId === trip.id
-    ? summarize(spending.items, bookings.items).total : 0;
+  const spent = spending.tripId === trip.id && bookings.tripId === trip.id
+    ? summarize(spending.items, bookings.items) : null;
+  const spentTotal = spent ? spent.total : 0;
   const dates = formatDateRange(trip.startDate, trip.endDate);
 
   const actions = [
@@ -158,7 +197,7 @@ export function TripDashboard({ id }) {
 
       ${trip.archived && html`<p class="notice">${t('dashboard.archivedNote')}</p>`}
 
-      <${StageCard} trip=${trip} />
+      <${StageCard} trip=${trip} spent=${spent} />
 
       ${getTripStage(trip).stage === 'active' && itinerary.tripId === trip.id && bookings.tripId === trip.id && documents.tripId === trip.id && html`
         <${TodayCard} trip=${trip} items=${itinerary.items} days=${itinerary.days}

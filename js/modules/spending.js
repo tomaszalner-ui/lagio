@@ -7,15 +7,16 @@
 //   amount     in the currency's minor units (cents): 1250 = 12,50
 //   currency   'EUR', 'USD', …
 //   amountEur  the same in euro cents. For EUR it equals amount; otherwise it
-//              is what the user entered (or, from step 7b, an automatic rate
-//              they can overwrite with the real amount from their bank)
+//              is the automatic rate's result, or what the user typed (e.g.
+//              the real amount from their bank)
 //   rateUsed   euros per 1 unit of the currency (1 for EUR), saved so the
 //              totals never change later
-//   rateSource 'same' (EUR), 'manual' (typed), 'auto' (step 7b)
+//   rateSource 'same' (EUR), 'manual' (typed), 'auto' (exchange rate, rates.js)
+//   rateDate   for 'auto': the day the bank published the rate, else null
 //   note       'Picerija prie Panteono'
 //   paidBy     a traveler's id, or null
 // Totals are always in EUR. Booking prices count automatically (see
-// summarize); bookings in another currency are counted from step 7b.
+// summarize); a price in another currency counts once it has priceEur.
 
 import { create, list, update, softDelete, restore } from '../db.js';
 
@@ -60,14 +61,17 @@ function cleanExpense(input) {
   const currency = input.currency || 'EUR';
   const isEur = currency === 'EUR';
   const amountEur = isEur ? input.amount : input.amountEur;
+  // An automatic rate is kept as fetched; a typed amount gets its rate worked out
+  const auto = !isEur && input.rateSource === 'auto' && typeof input.rateUsed === 'number';
   return {
     date: input.date,
     category: input.category,
     amount: input.amount,
     currency,
     amountEur,
-    rateUsed: isEur ? 1 : rateFrom(input.amount, currency, amountEur),
-    rateSource: isEur ? 'same' : (input.rateSource === 'auto' ? 'auto' : 'manual'),
+    rateUsed: isEur ? 1 : auto ? input.rateUsed : rateFrom(input.amount, currency, amountEur),
+    rateSource: isEur ? 'same' : auto ? 'auto' : 'manual',
+    rateDate: auto ? input.rateDate || null : null,
     note: String(input.note || '').trim(),
     paidBy: input.paidBy || null
   };
@@ -107,7 +111,7 @@ export function undoDeleteExpense(id) {
 // ---------- totals ----------
 
 // Bookings that have a price, as spending entries.
-// counted: false for a price in another currency (until step 7b)
+// counted: false for a price in another currency not yet converted to euros
 export function bookingCosts(bookings) {
   return bookings
     .filter((booking) => Number.isInteger(booking.price) && booking.price > 0)
@@ -173,4 +177,27 @@ export function defaultExpenseDate(trip, today) {
   const end = trip.endDate || trip.startDate;
   if (today >= trip.startDate && today <= end) return today;
   return today < trip.startDate ? trip.startDate : end;
+}
+
+// Who paid how much (expenses only; bookings have no payer):
+// [{ id: travelerId or null for "not set", total }] in the travelers' order
+export function totalsByPayer(expenses, travelers) {
+  const totals = new Map((travelers || []).map((person) => [person.id, 0]));
+  let unknown = 0;
+  for (const expense of expenses) {
+    if (expense.paidBy && totals.has(expense.paidBy)) {
+      totals.set(expense.paidBy, totals.get(expense.paidBy) + (expense.amountEur || 0));
+    } else {
+      unknown += expense.amountEur || 0;
+    }
+  }
+  const rows = [...totals].map(([id, total]) => ({ id, total }));
+  if (unknown > 0) rows.push({ id: null, total: unknown });
+  return rows;
+}
+
+// Spent compared with a budget (all euro cents):
+// { spent, budget, left (negative when over), share (0..1+), over }
+export function budgetUse(spent, budget) {
+  return { spent, budget, left: budget - spent, share: budget ? spent / budget : 0, over: spent > budget };
 }

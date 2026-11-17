@@ -10,6 +10,8 @@
 //   currency      'EUR', …
 //   archived      true / false
 //   travelers     [{ id, name }] (optional) — for per-person packing lists
+//   budget        null, or { total, byCategory: { food: 30000, … } } in euro
+//                 cents; per-category amounts are optional
 // A trip's own tripId is its id, so "everything of this trip" (the trip
 // itself included) can be found with one tripId lookup in every store.
 //
@@ -17,6 +19,7 @@
 // the dates and today's date, so it can never go out of date.
 
 import { STORES, newId, create, get, list, update, softDelete, restore, requestPersistentStorage } from '../db.js';
+import { CATEGORIES } from './spending.js';
 
 export const COVER_COLORS = ['sea', 'lagoon', 'forest', 'amber', 'sunset', 'berry', 'plum', 'slate'];
 export const CURRENCIES = ['EUR', 'USD', 'GBP', 'PLN', 'CHF', 'CZK', 'SEK', 'NOK', 'DKK', 'HUF', 'TRY', 'JPY'];
@@ -49,6 +52,21 @@ function cleanTravelers(list) {
     });
 }
 
+// Budget: only whole positive cent amounts are kept. Without a total, the
+// category amounts add up to it; with nothing at all the budget is null.
+export function cleanBudget(budget) {
+  if (!budget) return null;
+  const amount = (value) => (Number.isInteger(value) && value > 0 ? value : null);
+  const byCategory = {};
+  for (const category of CATEGORIES) {
+    const value = amount(budget.byCategory && budget.byCategory[category]);
+    if (value) byCategory[category] = value;
+  }
+  const sum = Object.values(byCategory).reduce((a, b) => a + b, 0);
+  const total = amount(budget.total) || sum;
+  return total ? { total, byCategory } : null;
+}
+
 function cleanTrip(input) {
   const seen = new Set();
   const destinations = (input.destinations || [])
@@ -66,7 +84,8 @@ function cleanTrip(input) {
     endDate: input.endDate || '',
     coverColor: COVER_COLORS.includes(input.coverColor) ? input.coverColor : COVER_COLORS[0],
     currency: CURRENCIES.includes(input.currency) ? input.currency : DEFAULT_CURRENCY,
-    travelers: cleanTravelers(input.travelers)
+    travelers: cleanTravelers(input.travelers),
+    budget: cleanBudget(input.budget)
   };
 }
 
@@ -118,6 +137,7 @@ function withDefaults(trip) {
     currency: DEFAULT_CURRENCY,
     archived: false,
     travelers: [],
+    budget: null,
     ...trip
   };
 }
@@ -215,7 +235,7 @@ export function getTripStage(trip, today = todayIso()) {
       totalDays: endDate ? daysBetween(startDate, endDate) + 1 : null
     };
   }
-  return { stage: 'done', daysSince: daysBetween(endDate, today) };
+  return { stage: 'done', daysSince: daysBetween(endDate, today), totalDays: daysBetween(startDate, endDate) + 1 };
 }
 
 // Splits trips into the Home screen's groups, each in a sensible order:

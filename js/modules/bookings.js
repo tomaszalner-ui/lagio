@@ -109,8 +109,18 @@ function cleanBooking(input) {
     address: text(input.address),
     price: Number.isInteger(input.price) ? input.price : null,
     currency: input.currency || 'EUR',
-    note: text(input.note)
+    note: text(input.note),
+    // A price in another currency is converted to euros later (setPriceEur).
+    // Every save clears the old conversion, so a changed price is converted again.
+    priceEur: null,
+    priceRate: null,
+    priceRateDate: null
   };
+}
+
+// Saves a price's euro value: { priceEur (cents), priceRate, priceRateDate }
+export function setPriceEur(id, { priceEur, priceRate, priceRateDate }) {
+  return update('bookings', id, { priceEur, priceRate, priceRateDate });
 }
 
 function assertValid(input) {

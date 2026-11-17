@@ -2114,3 +2114,71 @@ textarea {
   font-size: 22px;
   font-weight: 700;
 }
+
+/* ---------- budget, payers, post-trip recap (7b) ---------- */
+.spend-budget-line {
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+.spend-budget-line.is-over,
+.spend-bar-amount.is-over {
+  color: var(--color-danger);
+}
+
+.spend-bar.is-over span {
+  background: var(--color-danger);
+}
+
+.spend-summary > .spend-bar {
+  display: block;
+}
+
+.spend-payers-title {
+  margin-top: 14px;
+}
+
+.spend-payers,
+.recap-list {
+  display: grid;
+  gap: 6px;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.spend-payers li,
+.recap-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.spend-budget-button {
+  margin-top: 14px;
+}
+
+.budget-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 10px;
+}
+
+.recap {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+}
+
+.recap-total {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.recap .button {
+  justify-self: start;
+  margin-top: 8px;
+}
