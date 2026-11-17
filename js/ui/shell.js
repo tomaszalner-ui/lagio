@@ -21,6 +21,7 @@ import { TripBookings } from './trip-bookings.js';
 import { TripPacking } from './trip-packing.js';
 import { TripItinerary } from './trip-itinerary.js';
 import { TripSpending } from './trip-spending.js';
+import { TripNotes, NoteScreen } from './trip-notes.js';
 import { BookingForm } from './booking-form.js';
 import { BookingDetail } from './booking-detail.js';
 
@@ -44,6 +45,9 @@ function Screen({ route }) {
     // key: a different trip gets a fresh form instead of reusing the old one
     case 'tripEdit': return html`<${TripForm} id=${route.params.id} key=${'edit-' + route.params.id} />`;
     case 'trip': return html`<${TripDashboard} id=${route.params.id} key=${'trip-' + route.params.id} />`;
+    case 'tripNotes': return html`<${TripNotes} id=${route.params.id} key=${'notes-' + route.params.id} />`;
+    case 'noteNew': return html`<${NoteScreen} tripId=${route.params.id} key=${'note-new-' + route.params.id} />`;
+    case 'note': return html`<${NoteScreen} tripId=${route.params.id} noteId=${route.params.noteId} key=${'note-' + route.params.noteId} />`;
     case 'tripSpending': return html`<${TripSpending} id=${route.params.id} key=${'spend-' + route.params.id} />`;
     case 'tripItinerary': return html`<${TripItinerary} id=${route.params.id} key=${'plan-' + route.params.id} />`;
     case 'tripPacking': return html`<${TripPacking} id=${route.params.id} key=${'packing-' + route.params.id} />`;

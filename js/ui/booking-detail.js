@@ -14,25 +14,7 @@ import { showToast } from './toast.js';
 import { ChevronLeft, CopyIcon, PinIcon } from './illustrations.js';
 import { TYPE_INFO, TypeIcon, timeLabels } from './booking-parts.js';
 import { DocumentSection } from './document-section.js';
-
-// Copies text. The modern way first; if the browser refuses it, the older
-// way through a hidden text field. Returns true when it worked.
-async function copyText(text) {
-  try {
-    await navigator.clipboard.writeText(text);
-    return true;
-  } catch (error) {
-    const field = document.createElement('textarea');
-    field.value = text;
-    field.setAttribute('readonly', '');
-    field.className = 'visually-hidden';
-    document.body.appendChild(field);
-    field.select();
-    const copied = document.execCommand('copy');
-    field.remove();
-    return copied;
-  }
-}
+import { copyText } from './copy-text.js';
 
 // A map search for the address. It is a link the user taps (it opens the
 // maps app or site), not a network call by Lagio. (external link)

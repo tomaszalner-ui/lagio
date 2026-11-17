@@ -167,6 +167,10 @@ export async function duplicateTrip(id, { name }) {
       tripId: copy.id, listName, category, text, quantity: quantity || null, order, ownerId: ownerId || null, done: false
     });
   }
+  // Notes (addresses, phrases, contacts) usually still apply
+  for (const note of await list('notes', { tripId: id })) {
+    await create('notes', { tripId: copy.id, title: note.title, body: note.body });
+  }
   return copy;
 }
 

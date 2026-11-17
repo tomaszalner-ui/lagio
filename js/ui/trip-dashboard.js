@@ -5,7 +5,7 @@
 
 import { useEffect, useState } from 'preact/hooks';
 import { html } from './html.js';
-import { useStore, reloadChecklist, reloadItinerary, reloadBookings, reloadDocuments, reloadSpending } from '../store.js';
+import { useStore, reloadChecklist, reloadItinerary, reloadBookings, reloadDocuments, reloadSpending, reloadNotes } from '../store.js';
 import { t, formatDateRange, formatTimestamp, formatMoney } from '../i18n.js';
 import { backupStatus, dismissBackupReminder } from '../transfer.js';
 import { navigate, paths } from '../router.js';
@@ -29,7 +29,7 @@ const TILES = [
   { key: 'dashboard.tiles.itinerary', Icon: CalendarIcon, path: paths.tripItinerary },
   { key: 'dashboard.tiles.packing', Icon: ChecklistIcon, path: paths.tripPacking, packing: true },
   { key: 'dashboard.tiles.spending', Icon: WalletIcon, path: paths.tripSpending, spending: true },
-  { key: 'dashboard.tiles.notes', Icon: NoteIcon }
+  { key: 'dashboard.tiles.notes', Icon: NoteIcon, path: paths.tripNotes, notes: true }
 ];
 
 // After the trip: what it cost, per day, against the budget, and the
@@ -131,6 +131,7 @@ export function TripDashboard({ id }) {
   const bookings = useStore((s) => s.bookings);
   const documents = useStore((s) => s.documents);
   const spending = useStore((s) => s.spending);
+  const notes = useStore((s) => s.notes);
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -144,7 +145,7 @@ export function TripDashboard({ id }) {
 
   // The packing list's progress for its tile; today's plan during the trip
   useEffect(() => {
-    Promise.all([reloadChecklist(id), reloadItinerary(id), reloadBookings(id), reloadDocuments(id), reloadSpending(id)])
+    Promise.all([reloadChecklist(id), reloadItinerary(id), reloadBookings(id), reloadDocuments(id), reloadSpending(id), reloadNotes(id)])
       .catch((error) => console.error(error));
   }, [id]);
 
@@ -162,6 +163,7 @@ export function TripDashboard({ id }) {
   const spent = spending.tripId === trip.id && bookings.tripId === trip.id
     ? summarize(spending.items, bookings.items) : null;
   const spentTotal = spent ? spent.total : 0;
+  const noteCount = notes.tripId === trip.id ? notes.items.length : 0;
   const dates = formatDateRange(trip.startDate, trip.endDate);
 
   const actions = [
@@ -214,7 +216,7 @@ export function TripDashboard({ id }) {
         />`}
 
       <ul class="tiles">
-        ${TILES.map(({ key, Icon, path, packing, spending: isSpending }) => path
+        ${TILES.map(({ key, Icon, path, packing, spending: isSpending, notes: isNotes }) => path
           ? html`
             <li key=${key}>
               <a class="tile is-link" href=${path(trip.id)}>
@@ -225,6 +227,7 @@ export function TripDashboard({ id }) {
                     ${t('packing.tileProgress', { done: String(packingDone), total: String(packingTotal) })}
                   </span>`}
                 ${isSpending && spentTotal > 0 && html`<span class="badge badge-soon">${formatMoney(spentTotal, 'EUR')}</span>`}
+                ${isNotes && noteCount > 0 && html`<span class="badge badge-soon">${t('notes.tileCount', { count: noteCount })}</span>`}
               </a>
             </li>`
           : html`

@@ -2216,3 +2216,145 @@ textarea {
   color: var(--color-muted);
   white-space: nowrap;
 }
+
+/* ---------- notes (trip-notes.js) ---------- */
+.notes-add {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.notes-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.notes-list li + li {
+  border-top: 1px solid var(--color-border);
+}
+
+.note-row {
+  display: grid;
+  gap: 2px;
+  min-height: 56px;
+  padding: 10px 14px;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.note-row-title {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.note-row-preview {
+  overflow: hidden;
+  font-size: 14px;
+  color: var(--color-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.note-title {
+  margin-bottom: 10px;
+  overflow-wrap: anywhere;
+}
+
+.note-title.is-untitled {
+  color: var(--color-muted);
+}
+
+.note-body {
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  font-size: 17px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.note-body a {
+  font-weight: 600;
+}
+
+.note-updated {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.note-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.note-editor {
+  display: grid;
+  gap: 10px;
+}
+
+.note-editor-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.note-status {
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.note-title-input {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.note-body-input {
+  min-height: 50vh;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+/* Big text: the whole screen, white, large letters */
+.modal.big-text {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  border-radius: 0;
+}
+
+.big-text .modal-box {
+  min-height: 100%;
+  padding: 56px 20px 24px;
+}
+
+.big-text-close {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+}
+
+.big-text-title {
+  margin-bottom: 12px;
+  font-size: 30px;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.big-text-body {
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.35;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
